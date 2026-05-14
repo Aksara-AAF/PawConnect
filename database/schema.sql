@@ -4,7 +4,7 @@ DROP TABLE IF EXISTS pets CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
 
 CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(100) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
@@ -15,8 +15,8 @@ CREATE TABLE users (
 );
 
 CREATE TABLE pets (
-    id SERIAL PRIMARY KEY,
-    uploader_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    uploader_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     name VARCHAR(100) NOT NULL,
     species VARCHAR(50) NOT NULL,
     gender VARCHAR(20),
@@ -32,9 +32,9 @@ CREATE TABLE pets (
 );
 
 CREATE TABLE adoption_requests (
-    id SERIAL PRIMARY KEY,
-    pet_id INTEGER NOT NULL REFERENCES pets(id) ON DELETE CASCADE,
-    adopter_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    pet_id UUID NOT NULL REFERENCES pets(id) ON DELETE CASCADE,
+    adopter_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     status VARCHAR(20) DEFAULT 'Menunggu' 
         CHECK (status IN ('Menunggu', 'Diterima', 'Ditolak')),
     application_reason TEXT NOT NULL,
@@ -43,8 +43,8 @@ CREATE TABLE adoption_requests (
 );
 
 CREATE TABLE donations (
-    id SERIAL PRIMARY KEY,
-    donor_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    donor_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     amount DECIMAL(12, 2) NOT NULL CHECK (amount > 0),
     message VARCHAR(500),
     payment_status VARCHAR(20) DEFAULT 'Pending' 

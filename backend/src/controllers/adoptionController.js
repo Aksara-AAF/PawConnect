@@ -11,7 +11,7 @@ const createRequest = async (req, res, next) => {
       throw err;
     }
 
-    const newRequest = await adoptionService.createRequest(req.body, parseInt(adopterId));
+    const newRequest = await adoptionService.createRequest(req.body, adopterId);
     return success(res, newRequest, 'Pengajuan adopsi berhasil dikirim', 201);
   } catch (err) {
     next(err);
@@ -30,9 +30,9 @@ const updateRequestStatus = async (req, res, next) => {
     }
 
     const updatedRequest = await adoptionService.updateRequestStatus(
-      parseInt(req.params.id),
+      req.params.id,
       status,
-      parseInt(uploaderId)
+      uploaderId
     );
     return success(res, updatedRequest, `Status pengajuan berhasil diubah menjadi ${status}`);
   } catch (err) {

@@ -18,7 +18,7 @@ const getAllPets = async (req, res, next) => {
 
 const getPetById = async (req, res, next) => {
   try {
-    const pet = await petService.getPetById(parseInt(req.params.id));
+    const pet = await petService.getPetById(req.params.id);
     return success(res, pet, 'Detail hewan berhasil diambil');
   } catch (err) {
     next(err);
@@ -41,7 +41,7 @@ const updatePet = async (req, res, next) => {
     const userId = req.body.uploader_id;
 
     const updatedPet = await petService.updatePet(
-      parseInt(req.params.id),
+      req.params.id,
       req.body,
       userId
     );
@@ -53,10 +53,10 @@ const updatePet = async (req, res, next) => {
 
 const deletePet = async (req, res, next) => {
   try {
-    const userId = parseInt(req.query.user_id);
+    const userId = req.query.user_id;
 
     const deletedPet = await petService.deletePet(
-      parseInt(req.params.id),
+      req.params.id,
       userId
     );
     return success(res, deletedPet, 'Hewan berhasil dihapus');
