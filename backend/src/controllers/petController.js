@@ -16,9 +16,6 @@ const getAllPets = async (req, res, next) => {
   }
 };
 
-/**
- * GET /api/pets/:id
- */
 const getPetById = async (req, res, next) => {
   try {
     const pet = await petService.getPetById(parseInt(req.params.id));
@@ -28,14 +25,8 @@ const getPetById = async (req, res, next) => {
   }
 };
 
-/**
- * POST /api/pets
- * Body: { name, species, gender, age, location, description, health_notes }
- * Requires auth (uploader_id dari session)
- */
 const createPet = async (req, res, next) => {
   try {
-    // TODO: ganti dengan req.userId dari authMiddleware setelah Daffa implementasi
     const uploaderId = req.body.uploader_id;
 
     const newPet = await petService.createPet(req.body, uploaderId);
@@ -45,14 +36,8 @@ const createPet = async (req, res, next) => {
   }
 };
 
-/**
- * PUT /api/pets/:id
- * Body: { name, species, gender, age, location, description, health_notes }
- * Requires auth
- */
 const updatePet = async (req, res, next) => {
   try {
-    // TODO: ganti dengan req.userId dari authMiddleware
     const userId = req.body.uploader_id;
 
     const updatedPet = await petService.updatePet(
@@ -66,13 +51,8 @@ const updatePet = async (req, res, next) => {
   }
 };
 
-/**
- * DELETE /api/pets/:id
- * Requires auth
- */
 const deletePet = async (req, res, next) => {
   try {
-    // TODO: ganti dengan req.userId dari authMiddleware
     const userId = parseInt(req.query.user_id);
 
     const deletedPet = await petService.deletePet(

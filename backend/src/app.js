@@ -5,6 +5,8 @@ const cookieParser = require('cookie-parser');
 const errorHandler = require('./middleware/errorHandler');
 
 const petRoutes = require('./routes/petRoutes');
+const adoptionRoutes = require('./routes/adoptionRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 const app = express();
 
@@ -20,6 +22,8 @@ app.get('/api/health', (req, res) => {
 });
 
 app.use('/api/pets', petRoutes);
+app.use('/api/adoptions', adoptionRoutes);
+app.use('/api/users', userRoutes);
 
 app.use(errorHandler);
 
