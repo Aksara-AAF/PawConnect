@@ -1,11 +1,12 @@
 import Link from 'next/link';
+import { mockPets } from '../lib/mockData';
 
 export default function Home() {
   return (
     <div className="flex flex-col w-full bg-slate-50">
 
       {/* SNAP 1: HERO SECTION */}
-      <section className="snap-start snap-always shrink-0 relative flex flex-col justify-center w-full h-[calc(100vh-4rem)] overflow-hidden bg-teal-50">
+      <section className="shrink-0 relative flex flex-col justify-center w-full h-[calc(100vh-4rem)] overflow-hidden bg-teal-50">
         <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
           <div className="flex flex-col items-center gap-12 py-12 lg:flex-row">
             <div className="flex-1 z-10 text-center lg:text-left">
@@ -39,7 +40,7 @@ export default function Home() {
       </section>
 
       {/* SNAP 2: QUICK SEARCH CATEGORIES */}
-      <section className="snap-start snap-always shrink-0 relative flex flex-col justify-center w-full h-[calc(100vh-4rem)] bg-teal-900 pb-16">
+      <section className="shrink-0 relative flex flex-col justify-center w-full h-[calc(100vh-4rem)] bg-teal-900 pb-16">
         <div className="px-4 py-10 text-center">
           <h2 className="text-3xl font-bold text-white sm:text-4xl">Cari Sahabat Baru Anda</h2>
           <p className="mt-3 text-lg text-teal-100/90">Telusuri hewan peliharaan dari jaringan shelter dan rescuer kami.</p>
@@ -75,7 +76,7 @@ export default function Home() {
       </section>
 
       {/* SNAP 3: PREVIEW KATALOG (BARU) */}
-      <section className="snap-start snap-always shrink-0 relative flex flex-col justify-center w-full h-[calc(100vh-4rem)] bg-slate-50">
+      <section className="shrink-0 relative flex flex-col justify-center w-full h-[calc(100vh-4rem)] bg-slate-50">
         <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 w-full">
           {/* Header Section */}
           <div className="flex items-end justify-between mb-8">
@@ -90,76 +91,27 @@ export default function Home() {
 
           {/* Grid Preview Hewan */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            {mockPets.slice(0, 4).map((pet, index) => (
+              <Link key={pet.id} href={`/pets/${pet.id}`} className={`${index >= 2 ? 'hidden lg:block' : ''} group bg-white rounded-2xl overflow-hidden shadow-md border border-teal-100 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 cursor-pointer`}>
+                <div className="h-40 sm:h-48 overflow-hidden relative bg-teal-900">
+                  {/* Video di layer bawah (z-0) */}
+                  <video src="/dummy.mp4" autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover z-0" />
 
-            {/* Card Hewan 1 - Milo */}
-            {/* Tambahkan class "group" di wadah paling luar */}
-            <div className="group bg-white rounded-2xl overflow-hidden shadow-md border border-teal-100 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 cursor-pointer">
-              <div className="h-40 sm:h-48 overflow-hidden relative bg-teal-900">
-                {/* Video di layer bawah (z-0) */}
-                <video src="/dummy.mp4" autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover z-0" />
+                  {/* Gambar di layer atas (z-10), akan menghilang saat di-hover (group-hover:opacity-0) */}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={pet.image_url} alt={pet.species} className="absolute inset-0 w-full h-full object-cover z-10 transition-opacity duration-500 group-hover:opacity-0" />
 
-                {/* Gambar di layer atas (z-10), akan menghilang saat di-hover (group-hover:opacity-0) */}
-                <img src="https://images.unsplash.com/photo-1517849845537-4d257902454a?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Anjing" className="absolute inset-0 w-full h-full object-cover z-10 transition-opacity duration-500 group-hover:opacity-0" />
-
-                <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-teal-800 z-20">Anjing</div>
-              </div>
-              <div className="p-4 sm:p-5 relative z-20 bg-white">
-                <h3 className="text-xl font-bold text-teal-950 group-hover:text-orange-500 transition-colors">Milo</h3>
-                <p className="text-teal-700/70 text-sm mt-1 flex items-center">
-                  <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                  Tangerang Selatan
-                </p>
-              </div>
-            </div>
-
-            {/* Card Hewan 2 - Luna */}
-            <div className="group bg-white rounded-2xl overflow-hidden shadow-md border border-teal-100 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 cursor-pointer">
-              <div className="h-40 sm:h-48 overflow-hidden relative bg-teal-900">
-                <video src="/dummy.mp4" autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover z-0" />
-                <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Kucing" className="absolute inset-0 w-full h-full object-cover z-10 transition-opacity duration-500 group-hover:opacity-0" />
-                <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-teal-800 z-20">Kucing</div>
-              </div>
-              <div className="p-4 sm:p-5 relative z-20 bg-white">
-                <h3 className="text-xl font-bold text-teal-950 group-hover:text-orange-500 transition-colors">Luna</h3>
-                <p className="text-teal-700/70 text-sm mt-1 flex items-center">
-                  <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                  Jakarta Selatan
-                </p>
-              </div>
-            </div>
-
-            {/* Card Hewan 3 - Bobi */}
-            <div className="hidden lg:block group bg-white rounded-2xl overflow-hidden shadow-md border border-teal-100 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 cursor-pointer">
-              <div className="h-48 overflow-hidden relative bg-teal-900">
-                <video src="/dummy.mp4" autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover z-0" />
-                <img src="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Anjing" className="absolute inset-0 w-full h-full object-cover z-10 transition-opacity duration-500 group-hover:opacity-0" />
-                <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-teal-800 z-20">Anjing</div>
-              </div>
-              <div className="p-5 relative z-20 bg-white">
-                <h3 className="text-xl font-bold text-teal-950 group-hover:text-orange-500 transition-colors">Bobi</h3>
-                <p className="text-teal-700/70 text-sm mt-1 flex items-center">
-                  <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                  Depok
-                </p>
-              </div>
-            </div>
-
-            {/* Card Hewan 4 - Mochi */}
-            <div className="hidden lg:block group bg-white rounded-2xl overflow-hidden shadow-md border border-teal-100 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 cursor-pointer">
-              <div className="h-48 overflow-hidden relative bg-teal-900">
-                <video src="/dummy.mp4" autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover z-0" />
-                <img src="https://images.unsplash.com/photo-1495360010541-f48722b34f7d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Kucing" className="absolute inset-0 w-full h-full object-cover z-10 transition-opacity duration-500 group-hover:opacity-0" />
-                <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-teal-800 z-20">Kucing</div>
-              </div>
-              <div className="p-5 relative z-20 bg-white">
-                <h3 className="text-xl font-bold text-teal-950 group-hover:text-orange-500 transition-colors">Mochi</h3>
-                <p className="text-teal-700/70 text-sm mt-1 flex items-center">
-                  <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                  Bekasi Barat
-                </p>
-              </div>
-            </div>
-
+                  <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-teal-800 z-20">{pet.species}</div>
+                </div>
+                <div className="p-4 sm:p-5 relative z-20 bg-white">
+                  <h3 className="text-xl font-bold text-teal-950 group-hover:text-orange-500 transition-colors">{pet.name}</h3>
+                  <p className="text-teal-700/70 text-sm mt-1 flex items-center">
+                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    {pet.location}
+                  </p>
+                </div>
+              </Link>
+            ))}
           </div>
 
           {/* Tombol Lihat Semua (Muncul di layar kecil/HP) */}
@@ -173,7 +125,7 @@ export default function Home() {
       </section>
 
       {/* SNAP 4: FEATURES SECTION */}
-      <section className="snap-start snap-always shrink-0 relative flex flex-col justify-center w-full h-[calc(100vh-4rem)] bg-white">
+      <section className="shrink-0 relative flex flex-col justify-center w-full h-[calc(100vh-4rem)] bg-white">
         <div className="px-6 py-10 sm:px-12 lg:px-24 max-w-6xl mx-auto w-full">
           <div className="mb-12 text-center">
             <h2 className="text-3xl font-bold text-teal-950 sm:text-4xl">Mengapa PawConnect?</h2>
@@ -206,7 +158,7 @@ export default function Home() {
       </section>
 
       {/* SNAP 5: CTA SECTION */}
-      <section className="snap-start snap-always shrink-0 relative flex flex-col justify-center px-6 py-20 overflow-hidden text-center bg-teal-800 sm:px-12 lg:px-24">
+      <section className="shrink-0 relative flex flex-col justify-center px-6 py-20 overflow-hidden text-center bg-teal-800 sm:px-12 lg:px-24">
         <div className="relative z-10 max-w-4xl mx-auto space-y-8">
           <h2 className="text-3xl font-bold text-white sm:text-4xl">Siap Mengubah Kehidupan Mereka?</h2>
           <p className="text-lg text-teal-100 sm:text-xl">Buat akun PawConnect sekarang dan mulai perjalananmu mencari sahabat baru.</p>

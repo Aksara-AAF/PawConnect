@@ -12,7 +12,7 @@ export default function Footer() {
                             <div className="p-2 bg-amber-500 rounded-xl group-hover:scale-110 transition-transform duration-300">
                                 <PawPrint className="w-5 h-5 text-white" />
                             </div>
-                            <span className="font-bold text-xl tracking-tight">PawConnect</span>
+                            <span className="font-bold text-xl tracking-tight text-slate-900 dark:text-white">PawConnect</span>
                         </Link>
                         <p className="text-zinc-600 dark:text-zinc-400 max-w-sm mb-6 leading-relaxed">
                             Platform yang menghubungkan hewan peliharaan terlantar dengan keluarga baru yang penuh kasih sayang. Bersama kita bisa memberikan mereka kesempatan kedua.
@@ -47,18 +47,11 @@ export default function Footer() {
                     </div>
 
                     <div>
-                        <h3 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-6">Dukungan</h3>
-                        <ul className="space-y-4">
-                            <li>
-                                <a href="#" className="text-zinc-600 hover:text-amber-500 dark:text-zinc-400 dark:hover:text-amber-400 transition-colors">Pusat Bantuan</a>
-                            </li>
-                            <li>
-                                <a href="#" className="text-zinc-600 hover:text-amber-500 dark:text-zinc-400 dark:hover:text-amber-400 transition-colors">Syarat & Ketentuan</a>
-                            </li>
-                            <li>
-                                <a href="#" className="text-zinc-600 hover:text-amber-500 dark:text-zinc-400 dark:hover:text-amber-400 transition-colors">Kebijakan Privasi</a>
-                            </li>
-                        </ul>
+                        <h3 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-6">PROYEK AKHIR SBD</h3>
+                        <p className="text-zinc-600 dark:text-zinc-400">
+                            Dibuat oleh:<br/>
+                            Akbar, Daffa, Nabil, & Zhafarrel.
+                        </p>
                     </div>
                 </div>
 
@@ -66,9 +59,7 @@ export default function Footer() {
                     <p className="text-zinc-500 dark:text-zinc-500 text-sm">
                         © {new Date().getFullYear()} PawConnect. All rights reserved.
                     </p>
-                    <div className="flex items-center gap-1.5 text-sm text-zinc-500 dark:text-zinc-500 font-medium">
-                        Dibuat dengan <Heart className="w-4 h-4 text-rose-500 fill-rose-500 animate-pulse" /> di Praktikum SBD
-                    </div>
+
                 </div>
             </div>
         </footer>

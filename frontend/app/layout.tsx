@@ -24,20 +24,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id">
-      <body className={`${inter.className} flex flex-col h-screen overflow-hidden bg-slate-50`}>
+    <html lang="id" className="scroll-smooth">
+      <body className={`${inter.className} flex flex-col min-h-screen bg-slate-50`}>
 
-        <div className="flex-none z-50 bg-white">
+        <div className="flex-none z-50 bg-white sticky top-0 shadow-sm">
           <Navbar />
         </div>
 
-        <main className="flex-1 overflow-y-auto snap-y snap-mandatory relative">
+        <main className="flex-1 relative">
           {children}
-
-          <div className="snap-end">
-            <Footer />
-          </div>
         </main>
+
+        <Footer />
 
       </body>
     </html>
