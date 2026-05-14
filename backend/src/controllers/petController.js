@@ -1,5 +1,6 @@
 const petService = require('../services/petService');
 const { success, error } = require('../utils/responseHelper');
+const { invalidatePetsCache } = require('../middleware/cacheMiddleware');
 
 const getAllPets = async (req, res, next) => {
   try {
@@ -30,6 +31,7 @@ const createPet = async (req, res, next) => {
     const uploaderId = req.body.uploader_id;
 
     const newPet = await petService.createPet(req.body, uploaderId);
+    await invalidatePetsCache();
     return success(res, newPet, 'Hewan berhasil ditambahkan', 201);
   } catch (err) {
     next(err);
@@ -45,6 +47,7 @@ const updatePet = async (req, res, next) => {
       req.body,
       userId
     );
+    await invalidatePetsCache();
     return success(res, updatedPet, 'Data hewan berhasil diperbarui');
   } catch (err) {
     next(err);
@@ -59,6 +62,7 @@ const deletePet = async (req, res, next) => {
       req.params.id,
       userId
     );
+    await invalidatePetsCache();
     return success(res, deletedPet, 'Hewan berhasil dihapus');
   } catch (err) {
     next(err);
