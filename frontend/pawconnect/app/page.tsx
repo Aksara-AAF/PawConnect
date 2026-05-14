@@ -6,7 +6,7 @@ export default function Home() {
     <div className="flex flex-col w-full bg-slate-50">
 
       {/* SNAP 1: HERO SECTION */}
-      <section className="snap-start snap-always shrink-0 relative flex flex-col justify-center w-full h-[calc(100vh-4rem)] overflow-hidden bg-teal-50">
+      <section className="shrink-0 relative flex flex-col justify-center w-full h-[calc(100vh-4rem)] overflow-hidden bg-teal-50">
         <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
           <div className="flex flex-col items-center gap-12 py-12 lg:flex-row">
             <div className="flex-1 z-10 text-center lg:text-left">
@@ -40,7 +40,7 @@ export default function Home() {
       </section>
 
       {/* SNAP 2: QUICK SEARCH CATEGORIES */}
-      <section className="snap-start snap-always shrink-0 relative flex flex-col justify-center w-full h-[calc(100vh-4rem)] bg-teal-900 pb-16">
+      <section className="shrink-0 relative flex flex-col justify-center w-full h-[calc(100vh-4rem)] bg-teal-900 pb-16">
         <div className="px-4 py-10 text-center">
           <h2 className="text-3xl font-bold text-white sm:text-4xl">Cari Sahabat Baru Anda</h2>
           <p className="mt-3 text-lg text-teal-100/90">Telusuri hewan peliharaan dari jaringan shelter dan rescuer kami.</p>
@@ -76,7 +76,7 @@ export default function Home() {
       </section>
 
       {/* SNAP 3: PREVIEW KATALOG (BARU) */}
-      <section className="snap-start snap-always shrink-0 relative flex flex-col justify-center w-full h-[calc(100vh-4rem)] bg-slate-50">
+      <section className="shrink-0 relative flex flex-col justify-center w-full h-[calc(100vh-4rem)] bg-slate-50">
         <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 w-full">
           {/* Header Section */}
           <div className="flex items-end justify-between mb-8">
@@ -125,7 +125,7 @@ export default function Home() {
       </section>
 
       {/* SNAP 4: FEATURES SECTION */}
-      <section className="snap-start snap-always shrink-0 relative flex flex-col justify-center w-full h-[calc(100vh-4rem)] bg-white">
+      <section className="shrink-0 relative flex flex-col justify-center w-full h-[calc(100vh-4rem)] bg-white">
         <div className="px-6 py-10 sm:px-12 lg:px-24 max-w-6xl mx-auto w-full">
           <div className="mb-12 text-center">
             <h2 className="text-3xl font-bold text-teal-950 sm:text-4xl">Mengapa PawConnect?</h2>
@@ -158,7 +158,7 @@ export default function Home() {
       </section>
 
       {/* SNAP 5: CTA SECTION */}
-      <section className="snap-start snap-always shrink-0 relative flex flex-col justify-center px-6 py-20 overflow-hidden text-center bg-teal-800 sm:px-12 lg:px-24">
+      <section className="shrink-0 relative flex flex-col justify-center px-6 py-20 overflow-hidden text-center bg-teal-800 sm:px-12 lg:px-24">
         <div className="relative z-10 max-w-4xl mx-auto space-y-8">
           <h2 className="text-3xl font-bold text-white sm:text-4xl">Siap Mengubah Kehidupan Mereka?</h2>
           <p className="text-lg text-teal-100 sm:text-xl">Buat akun PawConnect sekarang dan mulai perjalananmu mencari sahabat baru.</p>
