@@ -1,20 +1,52 @@
 "use client";
 
-import React, { useState } from 'react';
-import { PawPrint } from 'lucide-react';
-import { mockPets } from '../../lib/mockData';
+import React, { useState, useEffect } from 'react';
+import { PawPrint, AlertCircle, Loader2, Plus } from 'lucide-react';
+import { fetchApi } from '../../lib/api';
+import { Pet } from '../../lib/mockData'; // we still use the interface
 import { PetCard } from '../../components/pets/PetCard';
 import { PetFilter } from '../../components/pets/PetFilter';
+import Link from 'next/link';
 
 export default function CatalogPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSpecies, setSelectedSpecies] = useState('Semua');
+  const [pets, setPets] = useState<Pet[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const filteredPets = mockPets.filter(pet => {
-    const matchesSearch = pet.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          pet.location.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesSpecies = selectedSpecies === 'Semua' || pet.species === selectedSpecies;
-    return matchesSearch && matchesSpecies;
+  useEffect(() => {
+    const loadPets = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const queryParams = new URLSearchParams();
+        if (selectedSpecies !== 'Semua') {
+          queryParams.append('species', selectedSpecies);
+        }
+        
+        const res = await fetchApi(`/pets?${queryParams.toString()}`);
+        setPets(res.data || []);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    // Debounce or direct fetch
+    const timeoutId = setTimeout(() => {
+      loadPets();
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
+  }, [selectedSpecies]);
+
+  const filteredPets = pets.filter(pet => {
+    if (!searchQuery) return true;
+    const lowerQuery = searchQuery.toLowerCase();
+    return pet.name?.toLowerCase().includes(lowerQuery) || 
+           pet.location?.toLowerCase().includes(lowerQuery);
   });
 
   return (
@@ -26,13 +58,19 @@ export default function CatalogPage() {
             <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight text-teal-950 dark:text-white mb-4">
               Temukan Teman <span className="text-orange-500">Berbulu</span>
             </h1>
-            <p className="text-teal-800/80 dark:text-teal-400 max-w-2xl text-lg leading-relaxed">
+            <p className="text-teal-900 dark:text-white/90 max-w-2xl text-lg leading-relaxed">
               Setiap hewan berhak mendapatkan rumah yang hangat. Temukan sahabat sejatimu dari puluhan hewan yang menunggu untuk diadopsi.
             </p>
           </div>
-          <div className="flex items-center gap-2 text-white font-bold bg-orange-500 px-5 py-2.5 rounded-full shadow-md hover:bg-orange-600 transition-colors">
-            <PawPrint className="w-5 h-5 animate-pulse" />
-            <span>{filteredPets.length} hewan tersedia</span>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 text-white font-bold bg-orange-500 px-5 py-2.5 rounded-full shadow-md">
+              <PawPrint className="w-5 h-5 animate-pulse" />
+              <span>{filteredPets.length} hewan tersedia</span>
+            </div>
+            <Link href="/pets/new" className="flex items-center gap-2 text-white font-bold bg-teal-700 hover:bg-teal-800 px-5 py-2.5 rounded-full shadow-md transition-colors">
+              <Plus className="w-5 h-5" />
+              <span>Posting Hewan</span>
+            </Link>
           </div>
         </div>
 
@@ -45,9 +83,29 @@ export default function CatalogPage() {
           />
         </div>
 
-        {/* Grid Section */}
-        {filteredPets.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        {/* Results Info */}
+        {!isLoading && !error && (
+          <div className="mb-8">
+            <p className="text-teal-800/80 dark:text-teal-400 font-medium">
+              Menampilkan <span className="text-teal-950 dark:text-white font-bold">{filteredPets.length}</span> hewan peliharaan
+            </p>
+          </div>
+        )}
+
+        {/* Status & Pet Grid */}
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center py-20">
+            <Loader2 className="w-10 h-10 text-orange-500 animate-spin mb-4" />
+            <p className="text-teal-800 dark:text-teal-400 font-medium">Memuat data hewan...</p>
+          </div>
+        ) : error ? (
+          <div className="flex flex-col items-center justify-center py-20 text-center">
+            <AlertCircle className="w-12 h-12 text-red-500 mb-4" />
+            <h3 className="text-xl font-bold text-teal-950 dark:text-white mb-2">Gagal Memuat Data</h3>
+            <p className="text-teal-800/80 dark:text-teal-400 max-w-md">{error}</p>
+          </div>
+        ) : filteredPets.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredPets.map(pet => (
               <PetCard key={pet.id} pet={pet} />
             ))}
