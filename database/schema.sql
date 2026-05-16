@@ -25,7 +25,8 @@ CREATE TABLE pets (
     description TEXT,
     health_notes TEXT,
     image_url VARCHAR(500),
-    status VARCHAR(20) DEFAULT 'Tersedia' 
+    video_url VARCHAR(500),
+    status VARCHAR(20) DEFAULT 'Tersedia'
         CHECK (status IN ('Tersedia', 'Diproses', 'Diadopsi')),
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW()
