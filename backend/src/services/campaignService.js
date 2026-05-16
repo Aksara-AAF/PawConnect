@@ -29,10 +29,13 @@ const createCampaign = async (userId, campaignData, imageFile) => {
     throw err;
   }
 
-  const { title, organizer, description, target_amount, end_date } = campaignData;
+  // Gunakan nama akun user sebagai organizer secara otomatis
+  const organizer = user.name;
 
-  if (!title || !organizer || !target_amount || !end_date) {
-    const err = new Error('title, organizer, target_amount, dan end_date wajib diisi');
+  const { title, description, target_amount, end_date } = campaignData;
+
+  if (!title || !target_amount || !end_date) {
+    const err = new Error('title, target_amount, dan end_date wajib diisi');
     err.statusCode = 400;
     throw err;
   }

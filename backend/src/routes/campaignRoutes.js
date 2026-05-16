@@ -11,4 +11,7 @@ router.get('/:id', campaignController.getCampaignById);
 // Protected – buat campaign baru (single image upload)
 router.post('/', authenticate, upload.single('campaign_image'), campaignController.createCampaign);
 
+// Protected – hapus campaign milik sendiri
+router.delete('/:id', authenticate, campaignController.deleteMyCampaign);
+
 module.exports = router;

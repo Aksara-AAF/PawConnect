@@ -101,6 +101,16 @@ export default function DashboardPage() {
         }
     };
 
+    const handleDeleteCampaign = async (campaignId: string) => {
+        if (!confirm('Yakin ingin menghapus kampanye ini? Tindakan ini tidak dapat dibatalkan.')) return;
+        try {
+            await fetchApi(`/campaigns/${campaignId}`, { method: 'DELETE' });
+            fetchData('my-campaigns');
+        } catch (err: any) {
+            alert(err.message || 'Gagal menghapus kampanye.');
+        }
+    };
+
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-teal-900/50 py-12">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -413,7 +423,10 @@ export default function DashboardPage() {
                                         <Link href={`/donate/${campaign.id}`} className="px-4 py-2 bg-teal-50 text-teal-700 text-sm font-bold rounded-xl text-center hover:bg-teal-100 border border-teal-100">
                                             Lihat Halaman
                                         </Link>
-                                        <button className="px-4 py-2 bg-white text-red-500 text-sm font-bold rounded-xl text-center hover:bg-red-50 border border-red-100">
+                                        <button
+                                            onClick={() => handleDeleteCampaign(campaign.id)}
+                                            className="px-4 py-2 bg-white text-red-500 text-sm font-bold rounded-xl text-center hover:bg-red-50 border border-red-100"
+                                        >
                                             Hapus
                                         </button>
                                     </div>

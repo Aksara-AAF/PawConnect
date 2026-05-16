@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { 
   ArrowLeft, Camera, Target, Calendar, 
-  FileText, Layout, Loader2, CheckCircle2,
+  FileText, Loader2, CheckCircle2,
   ShieldAlert, ShieldCheck, Clock, ArrowRight
 } from 'lucide-react';
 import Link from 'next/link';
@@ -34,7 +34,6 @@ export default function CreateCampaignPage() {
   // State Form
   const [formData, setFormData] = useState({
     title: '',
-    organizer: '',
     target_amount: '',
     description: '',
     end_date: '',
@@ -64,7 +63,6 @@ export default function CreateCampaignPage() {
       // WAJIB PAKAI FormData karena ada file gambar
       const data = new FormData();
       data.append('title', formData.title);
-      data.append('organizer', formData.organizer);
       data.append('target_amount', formData.target_amount);
       data.append('description', formData.description);
       data.append('end_date', formData.end_date);
@@ -172,7 +170,7 @@ export default function CreateCampaignPage() {
           {/* Header */}
           <div className="bg-teal-900 p-8 text-white">
             <h1 className="text-3xl font-bold flex items-center gap-3">
-              <Layout className="w-8 h-8 text-orange-400" /> Buka Penggalangan Dana
+              <FileText className="w-8 h-8 text-orange-400" /> Buka Penggalangan Dana
             </h1>
             <p className="text-teal-100/80 mt-2">
               Berikan informasi yang jujur dan transparan untuk membantu hewan peliharaan mendapatkan bantuan.
@@ -211,19 +209,6 @@ export default function CreateCampaignPage() {
                 type="text" name="title" required
                 value={formData.title} onChange={handleChange}
                 placeholder="Contoh: Bantuan Operasi Kaki Anjing Beagle"
-                className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-teal-500 outline-none transition-all"
-              />
-            </div>
-
-            {/* 2b. Organizer */}
-            <div className="space-y-2">
-              <label className="block text-sm font-bold text-teal-950 uppercase tracking-wider flex items-center gap-2">
-                <Layout className="w-4 h-4 text-orange-500" /> Nama Penggalang Dana / Shelter
-              </label>
-              <input 
-                type="text" name="organizer" required
-                value={formData.organizer} onChange={handleChange}
-                placeholder="Contoh: Shelter Kucing Melati"
                 className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-teal-500 outline-none transition-all"
               />
             </div>

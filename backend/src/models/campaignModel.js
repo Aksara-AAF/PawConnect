@@ -122,10 +122,22 @@ const incrementCollected = async (client, campaignId, amount) => {
   return result.rows[0] || null;
 };
 
+// Hapus campaign milik sendiri (oleh pemilik)
+const deleteCampaign = async (campaignId, userId) => {
+  const query = `
+    DELETE FROM campaigns
+    WHERE id = $1 AND user_id = $2
+    RETURNING id, title
+  `;
+  const result = await pool.query(query, [campaignId, userId]);
+  return result.rows[0] || null;
+};
+
 module.exports = {
   selectAllVerified,
   selectById,
   selectByUserId,
   insert,
   incrementCollected,
+  deleteCampaign,
 };

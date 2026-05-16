@@ -49,9 +49,25 @@ const getMyCampaigns = async (req, res, next) => {
   }
 };
 
+const deleteMyCampaign = async (req, res, next) => {
+  try {
+    const userId = req.user.userId;
+    const { id } = req.params;
+    const campaignModel = require('../models/campaignModel');
+    const deleted = await campaignModel.deleteCampaign(id, userId);
+    if (!deleted) {
+      return error(res, 'Campaign tidak ditemukan atau bukan milik Anda', 404);
+    }
+    return success(res, deleted, 'Campaign berhasil dihapus');
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   getAllCampaigns,
   getCampaignById,
   createCampaign,
   getMyCampaigns,
+  deleteMyCampaign,
 };
