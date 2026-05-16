@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Heart, ShieldCheck, CreditCard, Coffee, Gift, ArrowRight, Loader2 } from 'lucide-react';
+import { Heart, ShieldCheck, CreditCard, Coffee, Gift, ArrowRight, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
+import { fetchApi } from '@/lib/api';
 
 const PRESET_AMOUNTS = [
   { value: 50000, label: 'Rp 50K', icon: Coffee, desc: 'Bisa memberi makan 2 kucing jalanan' },
@@ -15,6 +16,8 @@ export default function DonatePage() {
   const [customAmount, setCustomAmount] = useState<string>('');
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [statusMessage, setStatusMessage] = useState('');
 
   const handlePresetClick = (value: number) => {
     setAmount(value);
@@ -34,18 +37,37 @@ export default function DonatePage() {
   const handleDonate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (amount < 10000) {
-      alert('Minimal donasi adalah Rp 10.000');
+      setStatus('error');
+      setStatusMessage('Minimal donasi adalah Rp 10.000');
       return;
     }
-    
+
     setIsLoading(true);
-    // TODO: Integrasi dengan API POST /api/donations (Daffa/Akbar)
-    console.log('Data Donasi:', { amount, message });
-    
-    setTimeout(() => {
+    setStatus('idle');
+    setStatusMessage('');
+
+    try {
+      await fetchApi('/donations', {
+        method: 'POST',
+        body: JSON.stringify({ amount, message: message || null }),
+      });
+
+      setStatus('success');
+      setStatusMessage(`Terima kasih! Donasi sebesar Rp ${amount.toLocaleString('id-ID')} berhasil kami terima. 🐾`);
+      setAmount(100000);
+      setCustomAmount('');
+      setMessage('');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Terjadi kesalahan. Silakan coba lagi.';
+      setStatus('error');
+      setStatusMessage(
+        msg.toLowerCase().includes('unauthorized') || msg.toLowerCase().includes('token')
+          ? 'Kamu harus login terlebih dahulu untuk berdonasi.'
+          : msg
+      );
+    } finally {
       setIsLoading(false);
-      alert('Terima kasih atas donasimu! (Ini masih simulasi)');
-    }, 1500);
+    }
   };
 
   return (
@@ -143,6 +165,20 @@ export default function DonatePage() {
                   className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition-all resize-none text-teal-900"
                 ></textarea>
               </div>
+
+              {/* Status Message */}
+              {status === 'success' && (
+                <div className="flex items-start gap-3 p-4 bg-emerald-50 border border-emerald-200 rounded-2xl text-emerald-800">
+                  <CheckCircle2 className="w-5 h-5 mt-0.5 text-emerald-500 shrink-0" />
+                  <p className="text-sm font-medium">{statusMessage}</p>
+                </div>
+              )}
+              {status === 'error' && (
+                <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-2xl text-red-800">
+                  <AlertCircle className="w-5 h-5 mt-0.5 text-red-500 shrink-0" />
+                  <p className="text-sm font-medium">{statusMessage}</p>
+                </div>
+              )}
 
               {/* Submit Button */}
               <button
