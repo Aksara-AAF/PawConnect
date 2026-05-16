@@ -1,203 +1,213 @@
+'use client';
+
+import { useState } from 'react';
 import Link from 'next/link';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
+import { Heart, ShieldCheck, CreditCard, Coffee, Gift, ArrowRight, Loader2 } from 'lucide-react';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+const PRESET_AMOUNTS = [
+  { value: 50000, label: 'Rp 50K', icon: Coffee, desc: 'Bisa memberi makan 2 kucing jalanan' },
+  { value: 100000, label: 'Rp 100K', icon: Heart, desc: 'Vaksinasi untuk 1 hewan peliharaan' },
+  { value: 250000, label: 'Rp 250K', icon: Gift, desc: 'Paket perawatan medis dasar' },
+];
 
-async function getTopPets() {
-    try {
-        const res = await fetch(`${API_URL}/pets`, { cache: 'no-store' });
-        if (!res.ok) return [];
-        const data = await res.json();
-        return (data.data || []).slice(0, 4);
-    } catch {
-        return [];
+export default function DonatePage() {
+  const [amount, setAmount] = useState<number>(100000);
+  const [customAmount, setCustomAmount] = useState<string>('');
+  const [message, setMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handlePresetClick = (value: number) => {
+    setAmount(value);
+    setCustomAmount('');
+  };
+
+  const handleCustomAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value.replace(/[^0-9]/g, '');
+    setCustomAmount(val);
+    if (val) {
+      setAmount(Number(val));
+    } else {
+      setAmount(0);
     }
-}
+  };
 
-export default async function Home() {
-    const topPets = await getTopPets();
-    return (
-        <div className="flex flex-col h-screen overflow-hidden bg-slate-50">
+  const handleDonate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (amount < 10000) {
+      alert('Minimal donasi adalah Rp 10.000');
+      return;
+    }
+    
+    setIsLoading(true);
+    // TODO: Integrasi dengan API POST /api/donations (Daffa/Akbar)
+    console.log('Data Donasi:', { amount, message });
+    
+    setTimeout(() => {
+      setIsLoading(false);
+      alert('Terima kasih atas donasimu! (Ini masih simulasi)');
+    }, 1500);
+  };
 
-            {/* NAVBAR */}
-            <div className="flex-none z-50 bg-white shadow-sm">
-                <Navbar />
+  return (
+    <div className="min-h-screen bg-slate-50 pb-24">
+      {/* Hero Section */}
+      <div className="relative bg-teal-950 py-20 overflow-hidden">
+        <div className="absolute inset-0 opacity-20">
+          <img 
+            src="https://images.unsplash.com/photo-1606425271394-c3ca9aa1fc06?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" 
+            alt="Anjing dan Kucing di Shelter" 
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-t from-teal-950 to-transparent"></div>
+        
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="inline-flex items-center justify-center p-3 bg-rose-500/20 rounded-full mb-6">
+            <Heart className="w-8 h-8 text-rose-500 fill-rose-500" />
+          </div>
+          <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-6">
+            Bantu Mereka Mendapatkan <span className="text-orange-400">Kehidupan yang Lebih Baik</span>
+          </h1>
+          <p className="text-lg md:text-xl text-teal-100/90 max-w-2xl mx-auto leading-relaxed">
+            100% donasi Anda akan disalurkan langsung ke shelter dan rescuer independen yang terverifikasi di jaringan PawConnect.
+          </p>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 relative z-20">
+        <div className="flex flex-col lg:flex-row gap-8 items-start">
+          
+          {/* Form Donasi (Kiri) */}
+          <div className="w-full lg:w-3/5 bg-white rounded-3xl shadow-xl border border-teal-50 p-6 sm:p-10">
+            <h2 className="text-2xl font-bold text-teal-950 mb-8">Pilih Nominal Donasi</h2>
+            
+            <form onSubmit={handleDonate} className="space-y-8">
+              {/* Preset Buttons */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {PRESET_AMOUNTS.map((preset) => {
+                  const isSelected = amount === preset.value && customAmount === '';
+                  const Icon = preset.icon;
+                  return (
+                    <button
+                      key={preset.value}
+                      type="button"
+                      onClick={() => handlePresetClick(preset.value)}
+                      className={`relative flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all duration-200 ${
+                        isSelected 
+                          ? 'border-orange-500 bg-orange-50 shadow-md transform -translate-y-1' 
+                          : 'border-slate-200 bg-white hover:border-orange-200 hover:bg-slate-50'
+                      }`}
+                    >
+                      <Icon className={`w-6 h-6 mb-2 ${isSelected ? 'text-orange-500' : 'text-slate-400'}`} />
+                      <span className={`text-lg font-bold ${isSelected ? 'text-orange-600' : 'text-slate-700'}`}>
+                        {preset.label}
+                      </span>
+                      <span className="text-xs text-center mt-2 text-slate-500 leading-tight">
+                        {preset.desc}
+                      </span>
+                      {isSelected && (
+                        <div className="absolute top-2 right-2 w-3 h-3 bg-orange-500 rounded-full animate-ping opacity-75"></div>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Custom Amount */}
+              <div>
+                <label className="block text-sm font-semibold text-teal-900 mb-2">Nominal Lainnya</label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 flex items-center pl-5 pointer-events-none">
+                    <span className="text-teal-900 font-bold">Rp</span>
+                  </div>
+                  <input
+                    type="text"
+                    value={customAmount}
+                    onChange={handleCustomAmountChange}
+                    placeholder="Masukkan nominal..."
+                    className="w-full pl-14 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all text-lg font-bold text-teal-950"
+                  />
+                </div>
+              </div>
+
+              <div className="h-px bg-slate-100 w-full my-6"></div>
+
+              {/* Message */}
+              <div>
+                <label className="block text-sm font-semibold text-teal-900 mb-2">Pesan Dukungan (Opsional)</label>
+                <textarea
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder="Tuliskan pesan penyemangat untuk shelter dan hewan peliharaan..."
+                  rows={4}
+                  className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition-all resize-none text-teal-900"
+                ></textarea>
+              </div>
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                disabled={isLoading || amount < 10000}
+                className="w-full flex items-center justify-center gap-2 py-5 bg-orange-500 text-white rounded-2xl font-bold text-lg hover:bg-orange-600 transition-all focus:ring-4 focus:ring-orange-500/20 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-orange-500/25"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-6 h-6 animate-spin" />
+                    Memproses...
+                  </>
+                ) : (
+                  <>
+                    <Heart className="w-6 h-6 fill-white" />
+                    Donasi Rp {amount.toLocaleString('id-ID')} Sekarang
+                  </>
+                )}
+              </button>
+            </form>
+          </div>
+
+          {/* Info Trust & Transparansi (Kanan) */}
+          <div className="w-full lg:w-2/5 space-y-6 mt-10 lg:mt-0">
+            <div className="bg-white rounded-3xl shadow-sm border border-teal-50 p-8">
+              <h3 className="text-xl font-bold text-teal-950 mb-6 flex items-center gap-2">
+                <ShieldCheck className="w-6 h-6 text-emerald-500" />
+                Donasi Anda Aman
+              </h3>
+              <ul className="space-y-6">
+                <li className="flex gap-4">
+                  <div className="w-12 h-12 rounded-full bg-teal-50 flex items-center justify-center shrink-0">
+                    <CreditCard className="w-6 h-6 text-teal-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-teal-900">Pembayaran Terverifikasi</h4>
+                    <p className="text-sm text-teal-700/70 mt-1">Sistem pembayaran kami dienkripsi dan diproses oleh *payment gateway* resmi berstandar nasional.</p>
+                  </div>
+                </li>
+                <li className="flex gap-4">
+                  <div className="w-12 h-12 rounded-full bg-teal-50 flex items-center justify-center shrink-0">
+                    <Heart className="w-6 h-6 text-teal-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-teal-900">100% Untuk Hewan</h4>
+                    <p className="text-sm text-teal-700/70 mt-1">PawConnect tidak mengambil potongan administrasi dari donasi Anda. Sepenuhnya untuk shelter.</p>
+                  </div>
+                </li>
+              </ul>
             </div>
 
-            <main className="flex-1 overflow-y-auto snap-y snap-mandatory relative scroll-smooth bg-slate-50">
+            <div className="bg-teal-900 rounded-3xl p-8 text-white relative overflow-hidden">
+              <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-teal-800 rounded-full opacity-50 blur-xl"></div>
+              <h3 className="text-xl font-bold mb-3 relative z-10">Ingin Mengadopsi Saja?</h3>
+              <p className="text-teal-100 text-sm mb-6 relative z-10 leading-relaxed">
+                Selain donasi dana, memberikan tempat tinggal yang hangat adalah donasi terbaik yang bisa Anda berikan.
+              </p>
+              <Link href="/pets" className="inline-flex items-center gap-2 px-6 py-3 bg-white text-teal-950 font-bold rounded-xl hover:bg-teal-50 transition-colors relative z-10 w-full justify-center">
+                Lihat Katalog Hewan <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
 
-                {/* 1. HERO SECTION */}
-                <section className="snap-start snap-always shrink-0 relative flex flex-col justify-center w-full h-full overflow-hidden bg-white">
-                    <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 relative z-10">
-                        <div className="flex flex-col items-center gap-12 py-12 lg:flex-row">
-                            <div className="flex-1 text-center lg:text-left">
-                                <div className="inline-flex items-center px-4 py-2 mb-6 text-sm font-semibold rounded-full text-teal-800 bg-teal-50 border border-teal-100 shadow-sm">
-                                    🐾 Platform Adopsi & Donasi Terpercaya
-                                </div>
-                                <h1 className="text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl lg:text-6xl text-teal-950">
-                                    Temukan Sahabat Baru, <br />
-                                    <span className="text-orange-500">Ubah Kehidupan Mereka.</span>
-                                </h1>
-                                <p className="max-w-2xl mx-auto mt-6 text-lg sm:text-xl text-teal-800/80 lg:mx-0">
-                                    Ribuan hewan peliharaan yang menggemaskan sedang menunggu keluarga yang penuh kasih. Buka hatimu untuk adopsi atau bantu shelter lokal melalui donasi langsung.
-                                </p>
-                                <div className="flex flex-col justify-center gap-4 mt-10 sm:flex-row lg:justify-start">
-                                    <Link href="/pets" className="px-8 py-4 text-lg font-bold text-white transition-all shadow-lg rounded-full bg-orange-500 hover:bg-orange-600 hover:-translate-y-1">
-                                        Mulai Adopsi
-                                    </Link>
-                                    <Link href="/donate" className="px-8 py-4 text-lg font-bold transition-all bg-white border-2 rounded-full text-teal-700 border-teal-200 hover:border-teal-600 hover:bg-teal-50">
-                                        Donasi Shelter
-                                    </Link>
-                                </div>
-                            </div>
-
-                            <div className="relative flex-1 w-full max-w-lg lg:max-w-none h-[350px] lg:h-[500px] rounded-[2rem] overflow-hidden shadow-2xl border-4 border-white transform lg:rotate-2 transition-transform hover:rotate-0 duration-500">
-                                <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Anjing beagle lucu" className="object-cover w-full h-full" />
-                            </div>
-                        </div>
-                    </div>
-                    {/* Ornamen latar belakang */}
-                    <div className="absolute top-0 right-0 -mr-20 -mt-20 w-[500px] h-[500px] bg-teal-50 rounded-full blur-3xl opacity-50 pointer-events-none z-0"></div>
-                    <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-[400px] h-[400px] bg-orange-50 rounded-full blur-3xl opacity-50 pointer-events-none z-0"></div>
-                </section>
-
-                {/* 2. QUICK SEARCH CATEGORIES  */}
-                <section className="snap-start snap-always shrink-0 relative flex flex-col justify-center w-full h-full bg-teal-900 pb-16">
-                    <div className="px-4 py-10 text-center relative z-10">
-                        <h2 className="text-3xl font-bold text-white sm:text-4xl">Cari Sahabat Baru Anda</h2>
-                        <p className="mt-3 text-lg text-teal-100/90">Telusuri hewan peliharaan dari jaringan shelter dan rescuer kami.</p>
-                    </div>
-                    <div className="relative z-10 px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 w-full">
-                        <div className="grid grid-cols-2 gap-4 md:grid-cols-4 sm:gap-6">
-                            <Link href="/pets?species=Anjing" className="flex flex-col items-center justify-center p-6 transition-all bg-white shadow-lg sm:p-8 rounded-2xl hover:shadow-2xl hover:-translate-y-2 group border border-teal-800">
-                                <div className="p-4 transition-colors rounded-full bg-teal-50 text-teal-700 group-hover:bg-orange-100 group-hover:text-orange-600">
-                                    <svg className="w-10 h-10 sm:w-14 sm:h-14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-                                </div>
-                                <span className="mt-4 font-bold text-teal-950 sm:text-lg">Anjing</span>
-                            </Link>
-                            <Link href="/pets?species=Kucing" className="flex flex-col items-center justify-center p-6 transition-all bg-white shadow-lg sm:p-8 rounded-2xl hover:shadow-2xl hover:-translate-y-2 group border border-teal-800">
-                                <div className="p-4 transition-colors rounded-full bg-teal-50 text-teal-700 group-hover:bg-orange-100 group-hover:text-orange-600">
-                                    <svg className="w-10 h-10 sm:w-14 sm:h-14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                </div>
-                                <span className="mt-4 font-bold text-teal-950 sm:text-lg">Kucing</span>
-                            </Link>
-                            <Link href="/pets?species=Lainnya" className="flex flex-col items-center justify-center p-6 transition-all bg-white shadow-lg sm:p-8 rounded-2xl hover:shadow-2xl hover:-translate-y-2 group border border-teal-800">
-                                <div className="p-4 transition-colors rounded-full bg-teal-50 text-teal-700 group-hover:bg-orange-100 group-hover:text-orange-600">
-                                    <svg className="w-10 h-10 sm:w-14 sm:h-14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-4 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm8 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-4 5c-3.31 0-6 2.69-6 6v3h12v-3c0-3.31-2.69-6-6-6z" /></svg>
-                                </div>
-                                <span className="mt-4 font-bold text-teal-950 sm:text-lg">Hewan Lainnya</span>
-                            </Link>
-                            <Link href="/donate" className="flex flex-col items-center justify-center p-6 transition-all bg-white shadow-lg sm:p-8 rounded-2xl hover:shadow-2xl hover:-translate-y-2 group border border-teal-800">
-                                <div className="p-4 transition-colors rounded-full bg-teal-50 text-teal-700 group-hover:bg-orange-100 group-hover:text-orange-600">
-                                    <svg className="w-10 h-10 sm:w-14 sm:h-14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
-                                </div>
-                                <span className="mt-4 font-bold text-center text-teal-950 sm:text-lg"> Donasi </span>
-                            </Link>
-                        </div>
-                    </div>
-                </section>
-
-                {/* 3. PREVIEW KATALOG */}
-                <section className="snap-start snap-always shrink-0 relative flex flex-col justify-center w-full h-full bg-slate-50">
-                    <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 w-full">
-                        <div className="flex items-end justify-between mb-8">
-                            <div>
-                                <h2 className="text-3xl font-bold text-teal-950 sm:text-4xl">Sahabat Menunggu Anda</h2>
-                                <p className="mt-2 text-lg text-teal-700/80">Beberapa hewan peliharaan yang baru saja ditambahkan ke katalog.</p>
-                            </div>
-                            <Link href="/pets" className="hidden lg:inline-flex items-center font-bold text-orange-500 hover:text-orange-600 transition-colors">
-                                Lihat Semua <span className="ml-2">→</span>
-                            </Link>
-                        </div>
-
-                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-                            {topPets.length > 0 ? topPets.map((pet: any, index: number) => (
-                                <Link key={pet.id} href={`/pets/${pet.id}`} className={`${index >= 2 ? 'hidden lg:block' : ''} group bg-white rounded-2xl overflow-hidden shadow-md border border-teal-100 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 cursor-pointer`}>
-                                    <div className="h-40 sm:h-48 overflow-hidden relative bg-teal-900">
-                                        <img src={pet.image_url} alt={pet.name || pet.species} className="absolute inset-0 w-full h-full object-cover z-10" />
-                                        <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-teal-800 z-20">{pet.species}</div>
-                                    </div>
-                                    <div className="p-4 sm:p-5 relative z-20 bg-white border-t border-teal-50">
-                                        <h3 className="text-xl font-bold text-teal-950 group-hover:text-orange-500 transition-colors">{pet.name}</h3>
-                                        <p className="text-teal-700/70 text-sm mt-1 flex items-center">
-                                            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                                            {pet.location}
-                                        </p>
-                                    </div>
-                                </Link>
-                            )) : (
-                                <div className="col-span-2 lg:col-span-4 text-center py-12 text-teal-700/60 bg-white rounded-2xl border border-dashed border-teal-200">
-                                    Belum ada hewan tersedia saat ini.
-                                </div>
-                            )}
-                        </div>
-
-                        <div className="mt-8 text-center lg:hidden">
-                            <Link href="/pets" className="inline-block px-6 py-3 font-bold text-orange-500 bg-orange-100/50 rounded-full hover:bg-orange-100 transition-colors">
-                                Lihat Semua Katalog →
-                            </Link>
-                        </div>
-                    </div>
-                </section>
-
-                {/* 4. FEATURES SECTION */}
-                <section className="snap-start snap-always shrink-0 relative flex flex-col justify-center w-full h-full bg-teal-50">
-                    <div className="px-6 py-10 sm:px-12 lg:px-24 max-w-6xl mx-auto w-full">
-                        <div className="mb-12 text-center">
-                            <h2 className="text-3xl font-bold text-teal-950 sm:text-4xl">Mengapa PawConnect?</h2>
-                            <p className="mt-4 text-lg text-teal-700/80">Membawa kebahagiaan untuk hewan dan manusia melalui sistem yang transparan.</p>
-                        </div>
-                        <div className="grid grid-cols-1 gap-10 md:grid-cols-3">
-                            <div className="p-8 transition-all duration-300 bg-white rounded-3xl shadow-sm border border-teal-100 hover:shadow-xl hover:-translate-y-2">
-                                <div className="flex items-center justify-center w-16 h-16 mb-6 rounded-2xl bg-orange-100 text-orange-600 shadow-sm">
-                                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
-                                </div>
-                                <h3 className="text-2xl font-bold text-teal-950">Adopsi Langsung</h3>
-                                <p className="mt-3 text-teal-800/80">Hubungi pengunggah hewan secara langsung untuk proses adopsi yang lebih personal dan cepat.</p>
-                            </div>
-                            <div className="p-8 transition-all duration-300 bg-white rounded-3xl shadow-sm border border-teal-100 hover:shadow-xl hover:-translate-y-2">
-                                <div className="flex items-center justify-center w-16 h-16 mb-6 rounded-2xl bg-teal-100 text-teal-600 shadow-sm">
-                                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                </div>
-                                <h3 className="text-2xl font-bold text-teal-950">Donasi Transparan</h3>
-                                <p className="mt-3 text-teal-800/80">Bantu shelter dengan donasi yang tercatat rapi. Setiap rupiah sangat berarti bagi mereka.</p>
-                            </div>
-                            <div className="p-8 transition-all duration-300 bg-white rounded-3xl shadow-sm border border-teal-100 hover:shadow-xl hover:-translate-y-2">
-                                <div className="flex items-center justify-center w-16 h-16 mb-6 rounded-2xl bg-indigo-100 text-indigo-600 shadow-sm">
-                                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-11.622 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
-                                </div>
-                                <h3 className="text-2xl font-bold text-teal-950">Lingkungan Aman</h3>
-                                <p className="mt-3 text-teal-800/80">Identitas dan data pengguna terlindungi untuk menciptakan komunitas penyayang hewan yang aman.</p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <div className="snap-start snap-always shrink-0 flex flex-col w-full">
-
-                    {/* 5. CTA SECTION*/}
-                    <section className="relative flex flex-col justify-center px-6 py-32 overflow-hidden text-center bg-white sm:px-12 lg:px-24 min-h-[calc(100vh-4rem)]">
-                        <div className="relative z-10 max-w-4xl mx-auto space-y-8">
-                            <h2 className="text-3xl font-bold text-teal-950 sm:text-4xl">Siap Mengubah Kehidupan Mereka?</h2>
-                            <p className="text-lg text-teal-800/80 sm:text-xl">Buat akun PawConnect sekarang dan mulai perjalananmu mencari sahabat baru.</p>
-                            <div className="pt-4">
-                                <Link href="/register" className="inline-block px-10 py-4 text-lg font-bold transition-transform transform bg-orange-500 rounded-full text-white hover:scale-105 shadow-xl hover:bg-orange-600">
-                                    Daftar Sekarang
-                                </Link>
-                            </div>
-                        </div>
-                        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, #134e4a 1px, transparent 0)', backgroundSize: '32px 32px' }}></div>
-                    </section>
-
-                    {/* 6. FOOTER */}
-                    <div className="bg-zinc-950 w-full shrink-0">
-                        <Footer />
-                    </div>
-
-                </div>
-
-            </main>
         </div>
-    );
+      </div>
+    </div>
+  );
 }
