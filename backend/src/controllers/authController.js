@@ -33,8 +33,8 @@ const login = async (req, res, next) => {
     res.cookie('sessionId', sessionToken, {
       httpOnly: true,
       maxAge: 86400 * 1000, // 24 hours
-      // secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax'
+      secure: true,
+      sameSite: 'none'
     });
     
     return success(res, user, 'Login successful', 200);
@@ -51,7 +51,7 @@ const logout = async (req, res, next) => {
     const sessionToken = req.cookies.sessionId;
     await authService.logout(sessionToken);
     
-    res.clearCookie('sessionId');
+    res.clearCookie('sessionId', { httpOnly: true, secure: true, sameSite: 'none' });
     return success(res, null, 'Logout successful', 200);
   } catch (err) {
     next(err);
