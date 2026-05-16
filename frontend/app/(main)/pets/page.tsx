@@ -2,10 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { PawPrint, AlertCircle, Loader2, Plus } from 'lucide-react';
-import { fetchApi } from '../../lib/api';
-import { Pet } from '../../lib/mockData'; // we still use the interface
-import { PetCard } from '../../components/pets/PetCard';
-import { PetFilter } from '../../components/pets/PetFilter';
+import { fetchApi } from '@/lib/api';
+import { Pet } from '@/lib/mockData';
+import { PetCard } from '@/components/pets/PetCard';
+import { PetFilter } from '@/components/pets/PetFilter';
 import Link from 'next/link';
 
 export default function CatalogPage() {
@@ -24,7 +24,7 @@ export default function CatalogPage() {
         if (selectedSpecies !== 'Semua') {
           queryParams.append('species', selectedSpecies);
         }
-        
+
         const res = await fetchApi(`/pets?${queryParams.toString()}`);
         setPets(res.data || []);
       } catch (err: any) {
@@ -34,7 +34,6 @@ export default function CatalogPage() {
       }
     };
 
-    // Debounce or direct fetch
     const timeoutId = setTimeout(() => {
       loadPets();
     }, 300);
@@ -45,8 +44,8 @@ export default function CatalogPage() {
   const filteredPets = pets.filter(pet => {
     if (!searchQuery) return true;
     const lowerQuery = searchQuery.toLowerCase();
-    return pet.name?.toLowerCase().includes(lowerQuery) || 
-           pet.location?.toLowerCase().includes(lowerQuery);
+    return pet.name?.toLowerCase().includes(lowerQuery) ||
+      pet.location?.toLowerCase().includes(lowerQuery);
   });
 
   return (
@@ -76,8 +75,8 @@ export default function CatalogPage() {
 
         {/* Filter Section */}
         <div className="mb-10 sticky top-[72px] z-40">
-          <PetFilter 
-            onSearchChange={setSearchQuery} 
+          <PetFilter
+            onSearchChange={setSearchQuery}
             onSpeciesChange={setSelectedSpecies}
             selectedSpecies={selectedSpecies}
           />

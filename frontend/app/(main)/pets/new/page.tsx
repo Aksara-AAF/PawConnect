@@ -1,5 +1,5 @@
 import React from 'react';
-import { PetForm } from '../../../components/pets/PetForm';
+import { PetForm } from '../../../../components/pets/PetForm';
 import { PawPrint } from 'lucide-react';
 
 export default function NewPetPage() {

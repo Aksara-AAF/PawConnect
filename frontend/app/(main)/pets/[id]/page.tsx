@@ -3,11 +3,11 @@
 import React, { useState, use, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { MapPin, Clock, Info, ShieldCheck, HeartPulse, ArrowLeft, Loader2, AlertCircle } from 'lucide-react';
-import { fetchApi } from '../../../lib/api';
-import { Pet } from '../../../lib/mockData';
-import { Badge } from '../../../components/ui/Badge';
-import { Button } from '../../../components/ui/Button';
-import { AdoptionModal } from '../../../components/adoption/AdoptionModal';
+import { fetchApi } from '@/lib/api';
+import { Pet } from '@/lib/mockData';
+import { Badge } from '@/components/ui/Badge';
+import { Button } from '@/components/ui/Button';
+import { AdoptionModal } from '@/components/adoption/AdoptionModal';
 import Link from 'next/link';
 
 export default function PetDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -65,9 +65,9 @@ export default function PetDetailPage({ params }: { params: Promise<{ id: string
           </Link>
         </div>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img 
-          src={pet.image_url} 
-          alt={pet.name} 
+        <img
+          src={pet.image_url}
+          alt={pet.name}
           className="w-full h-full object-cover opacity-90"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-50 via-slate-50/20 to-transparent dark:from-teal-900 dark:via-teal-900/20"></div>
@@ -75,7 +75,7 @@ export default function PetDetailPage({ params }: { params: Promise<{ id: string
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 -mt-32 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
+
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
             <div className="bg-white dark:bg-teal-950 rounded-3xl p-8 shadow-sm border border-teal-100 dark:border-teal-800">
@@ -84,7 +84,7 @@ export default function PetDetailPage({ params }: { params: Promise<{ id: string
                 <Badge variant={pet.gender === 'Jantan' ? 'info' : 'warning'} className="text-sm px-3 py-1">{pet.gender}</Badge>
                 <span className="text-teal-700 dark:text-teal-400 font-medium">• {pet.species}</span>
               </div>
-              
+
               <h1 className="text-4xl md:text-5xl font-extrabold text-teal-950 dark:text-white mb-6">
                 {pet.name}
               </h1>
@@ -133,15 +133,15 @@ export default function PetDetailPage({ params }: { params: Promise<{ id: string
               <p className="text-sm text-teal-800/80 dark:text-teal-400 mb-6">
                 Bantu {pet.name} mendapatkan kasih sayang yang layak. Pengajuan Anda akan direview oleh uploader.
               </p>
-              
-              <Button 
-                size="lg" 
+
+              <Button
+                size="lg"
                 className="w-full text-base mb-6 shadow-md"
                 onClick={() => setIsModalOpen(true)}
               >
                 Ajukan Adopsi
               </Button>
-              
+
               <div className="pt-5 border-t border-teal-100 dark:border-teal-800">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-full bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center border border-emerald-100 dark:border-emerald-500/20">
@@ -159,9 +159,9 @@ export default function PetDetailPage({ params }: { params: Promise<{ id: string
         </div>
       </div>
 
-      <AdoptionModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
+      <AdoptionModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
         petName={pet.name}
         petId={pet.id}
       />
