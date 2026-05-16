@@ -25,9 +25,20 @@ const getIncomingRequests = async (userId) => {
   return await adoptionModel.selectByUploader(userId);
 };
 
+const applyShelter = async (userId) => {
+  const result = await userModel.apply(userId);
+  if (!result) {
+    const err = new Error('Akun tidak ditemukan atau sudah terverifikasi sebagai shelter');
+    err.statusCode = 400;
+    throw err;
+  }
+  return result;
+};
+
 module.exports = {
   getUserPets,
   getMyPets,
   getMyRequests,
   getIncomingRequests,
+  applyShelter,
 };

@@ -1,8 +1,8 @@
-INSERT INTO users (id, name, email, password_hash, phone, is_verified_shelter) VALUES
-('11111111-1111-4111-a111-111111111111', 'Akbar Rahman', 'akbar@example.com', '$2b$10$8KzaNdKIMyOkASCBqfG2JeFdBGOiVQHEoSBqaXGsjOcEBfMhiDPfi', '081234567890', false),
-('22222222-2222-4222-a222-222222222222', 'Daffa Pratama', 'daffa@example.com', '$2b$10$8KzaNdKIMyOkASCBqfG2JeFdBGOiVQHEoSBqaXGsjOcEBfMhiDPfi', '081234567891', false),
-('33333333-3333-4333-a333-333333333333', 'Nabil Azhari', 'nabil@example.com', '$2b$10$8KzaNdKIMyOkASCBqfG2JeFdBGOiVQHEoSBqaXGsjOcEBfMhiDPfi', '081234567892', false),
-('44444444-4444-4444-a444-444444444444', 'Jakarta Animal Shelter', 'shelter@example.com', '$2b$10$8KzaNdKIMyOkASCBqfG2JeFdBGOiVQHEoSBqaXGsjOcEBfMhiDPfi', '02112345678', true);
+INSERT INTO users (id, name, email, password_hash, phone, is_verified_shelter, role) VALUES
+('11111111-1111-4111-a111-111111111111', 'Akbar Rahman', 'akbar@example.com', '$2b$10$8KzaNdKIMyOkASCBqfG2JeFdBGOiVQHEoSBqaXGsjOcEBfMhiDPfi', '081234567890', false, 'user'),
+('22222222-2222-4222-a222-222222222222', 'Daffa Pratama', 'daffa@example.com', '$2b$10$8KzaNdKIMyOkASCBqfG2JeFdBGOiVQHEoSBqaXGsjOcEBfMhiDPfi', '081234567891', false, 'user'),
+('33333333-3333-4333-a333-333333333333', 'Nabil Azhari', 'nabil@example.com', '$2b$10$8KzaNdKIMyOkASCBqfG2JeFdBGOiVQHEoSBqaXGsjOcEBfMhiDPfi', '081234567892', false, 'user'),
+('44444444-4444-4444-a444-444444444444', 'Jakarta Animal Shelter', 'shelter@example.com', '$2b$10$8KzaNdKIMyOkASCBqfG2JeFdBGOiVQHEoSBqaXGsjOcEBfMhiDPfi', '02112345678', true, 'user'),
 
 INSERT INTO pets (id, uploader_id, name, species, gender, age, location, description, health_notes, status) VALUES
 ('aaaa1111-1111-4111-a111-111111111111', '11111111-1111-4111-a111-111111111111', 'Milo', 'Kucing', 'Jantan', '2 tahun', 'Jakarta Selatan', 'Kucing oranye yang sangat ramah dan suka bermain. Cocok untuk keluarga dengan anak-anak.', 'Sudah vaksin lengkap, steril', 'Tersedia'),

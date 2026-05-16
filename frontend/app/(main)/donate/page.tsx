@@ -1,249 +1,181 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Heart, ShieldCheck, CreditCard, Coffee, Gift, ArrowRight, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Heart, ShieldCheck, TrendingUp, Users, Target, Loader2, AlertCircle, PlusCircle } from 'lucide-react';
 import { fetchApi } from '@/lib/api';
 
-const PRESET_AMOUNTS = [
-  { value: 50000, label: 'Rp 50K', icon: Coffee, desc: 'Bisa memberi makan 2 kucing jalanan' },
-  { value: 100000, label: 'Rp 100K', icon: Heart, desc: 'Vaksinasi untuk 1 hewan peliharaan' },
-  { value: 250000, label: 'Rp 250K', icon: Gift, desc: 'Paket perawatan medis dasar' },
-];
+export default function DonateCatalogPage() {
+    const [campaigns, setCampaigns] = useState<any[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-export default function DonatePage() {
-  const [amount, setAmount] = useState<number>(100000);
-  const [customAmount, setCustomAmount] = useState<string>('');
-  const [message, setMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
-  const [statusMessage, setStatusMessage] = useState('');
+    useEffect(() => {
+        const fetchCampaigns = async () => {
+            try {
+                const res = await fetchApi('/campaigns');
+                setCampaigns(res.data || []);
+            } catch (err: any) {
+                setError(err.message || 'Gagal memuat daftar kampanye.');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchCampaigns();
+    }, []);
 
-  const handlePresetClick = (value: number) => {
-    setAmount(value);
-    setCustomAmount('');
-  };
+    return (
+        <div className="min-h-screen bg-slate-50 pb-24">
+            {/* Hero Section */}
+            <div className="relative bg-teal-950 py-20 overflow-hidden">
+                <div className="absolute inset-0 opacity-20">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                        src="https://images.unsplash.com/photo-1606425271394-c3ca9aa1fc06?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+                        alt="Anjing dan Kucing di Shelter"
+                        className="w-full h-full object-cover"
+                    />
+                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-teal-950 to-transparent"></div>
 
-  const handleCustomAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value.replace(/[^0-9]/g, '');
-    setCustomAmount(val);
-    if (val) {
-      setAmount(Number(val));
-    } else {
-      setAmount(0);
-    }
-  };
+                <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <div className="inline-flex items-center justify-center p-3 bg-rose-500/20 rounded-full mb-6">
+                        <Heart className="w-8 h-8 text-rose-500 fill-rose-500" />
+                    </div>
+                    <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-6">
+                        Pilih Kampanye <span className="text-orange-400">Donasi</span>
+                    </h1>
+                    <p className="text-lg md:text-xl text-teal-100/90 max-w-2xl mx-auto leading-relaxed">
+                        Salurkan bantuanmu langsung ke shelter atau rescuer terverifikasi yang sedang membutuhkan uluran tangan kita saat ini.
+                    </p>
+                </div>
+            </div>
 
-  const handleDonate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (amount < 10000) {
-      setStatus('error');
-      setStatusMessage('Minimal donasi adalah Rp 10.000');
-      return;
-    }
+            {/* Catalog Section */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 relative z-20">
 
-    setIsLoading(true);
-    setStatus('idle');
-    setStatusMessage('');
-
-    try {
-      await fetchApi('/donations', {
-        method: 'POST',
-        body: JSON.stringify({ amount, message: message || null }),
-      });
-
-      setStatus('success');
-      setStatusMessage(`Terima kasih! Donasi sebesar Rp ${amount.toLocaleString('id-ID')} berhasil kami terima. 🐾`);
-      setAmount(100000);
-      setCustomAmount('');
-      setMessage('');
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Terjadi kesalahan. Silakan coba lagi.';
-      setStatus('error');
-      setStatusMessage(
-        msg.toLowerCase().includes('unauthorized') || msg.toLowerCase().includes('token')
-          ? 'Kamu harus login terlebih dahulu untuk berdonasi.'
-          : msg
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  return (
-    <div className="min-h-screen bg-slate-50 pb-24">
-      {/* Hero Section */}
-      <div className="relative bg-teal-950 py-20 overflow-hidden">
-        <div className="absolute inset-0 opacity-20">
-          <img 
-            src="https://images.unsplash.com/photo-1606425271394-c3ca9aa1fc06?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" 
-            alt="Anjing dan Kucing di Shelter" 
-            className="w-full h-full object-cover"
-          />
-        </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-teal-950 to-transparent"></div>
-        
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center justify-center p-3 bg-rose-500/20 rounded-full mb-6">
-            <Heart className="w-8 h-8 text-rose-500 fill-rose-500" />
-          </div>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-6">
-            Bantu Mereka Mendapatkan <span className="text-orange-400">Kehidupan yang Lebih Baik</span>
-          </h1>
-          <p className="text-lg md:text-xl text-teal-100/90 max-w-2xl mx-auto leading-relaxed">
-            100% donasi Anda akan disalurkan langsung ke shelter dan rescuer independen yang terverifikasi di jaringan PawConnect.
-          </p>
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 relative z-20">
-        <div className="flex flex-col lg:flex-row gap-8 items-start">
-          
-          {/* Form Donasi (Kiri) */}
-          <div className="w-full lg:w-3/5 bg-white rounded-3xl shadow-xl border border-teal-50 p-6 sm:p-10">
-            <h2 className="text-2xl font-bold text-teal-950 mb-8">Pilih Nominal Donasi</h2>
-            
-            <form onSubmit={handleDonate} className="space-y-8">
-              {/* Preset Buttons */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                {PRESET_AMOUNTS.map((preset) => {
-                  const isSelected = amount === preset.value && customAmount === '';
-                  const Icon = preset.icon;
-                  return (
-                    <button
-                      key={preset.value}
-                      type="button"
-                      onClick={() => handlePresetClick(preset.value)}
-                      className={`relative flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all duration-200 ${
-                        isSelected 
-                          ? 'border-orange-500 bg-orange-50 shadow-md transform -translate-y-1' 
-                          : 'border-slate-200 bg-white hover:border-orange-200 hover:bg-slate-50'
-                      }`}
+                {/* Info Banner */}
+                <div className="bg-white rounded-2xl shadow-md border border-teal-50 p-6 mb-10 flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center shrink-0">
+                            <ShieldCheck className="w-6 h-6 text-emerald-500" />
+                        </div>
+                        <div>
+                            <h3 className="font-bold text-teal-950">100% Aman &amp; Terverifikasi</h3>
+                            <p className="text-sm text-teal-700/80">Semua penggalang dana di halaman ini telah melewati proses verifikasi ketat tim PawConnect.</p>
+                        </div>
+                    </div>
+                    <Link
+                        href="/donate/new"
+                        className="flex items-center gap-2 px-5 py-3 bg-orange-500 text-white font-bold rounded-xl hover:bg-orange-600 transition-colors shadow-md whitespace-nowrap shrink-0"
                     >
-                      <Icon className={`w-6 h-6 mb-2 ${isSelected ? 'text-orange-500' : 'text-slate-400'}`} />
-                      <span className={`text-lg font-bold ${isSelected ? 'text-orange-600' : 'text-slate-700'}`}>
-                        {preset.label}
-                      </span>
-                      <span className="text-xs text-center mt-2 text-slate-500 leading-tight">
-                        {preset.desc}
-                      </span>
-                      {isSelected && (
-                        <div className="absolute top-2 right-2 w-3 h-3 bg-orange-500 rounded-full animate-ping opacity-75"></div>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Custom Amount */}
-              <div>
-                <label className="block text-sm font-semibold text-teal-900 mb-2">Nominal Lainnya</label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-5 pointer-events-none">
-                    <span className="text-teal-900 font-bold">Rp</span>
-                  </div>
-                  <input
-                    type="text"
-                    value={customAmount}
-                    onChange={handleCustomAmountChange}
-                    placeholder="Masukkan nominal..."
-                    className="w-full pl-14 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all text-lg font-bold text-teal-950"
-                  />
+                        <PlusCircle className="w-5 h-5" /> Buka Penggalangan Dana
+                    </Link>
                 </div>
-              </div>
 
-              <div className="h-px bg-slate-100 w-full my-6"></div>
-
-              {/* Message */}
-              <div>
-                <label className="block text-sm font-semibold text-teal-900 mb-2">Pesan Dukungan (Opsional)</label>
-                <textarea
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  placeholder="Tuliskan pesan penyemangat untuk shelter dan hewan peliharaan..."
-                  rows={4}
-                  className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition-all resize-none text-teal-900"
-                ></textarea>
-              </div>
-
-              {/* Status Message */}
-              {status === 'success' && (
-                <div className="flex items-start gap-3 p-4 bg-emerald-50 border border-emerald-200 rounded-2xl text-emerald-800">
-                  <CheckCircle2 className="w-5 h-5 mt-0.5 text-emerald-500 shrink-0" />
-                  <p className="text-sm font-medium">{statusMessage}</p>
-                </div>
-              )}
-              {status === 'error' && (
-                <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-2xl text-red-800">
-                  <AlertCircle className="w-5 h-5 mt-0.5 text-red-500 shrink-0" />
-                  <p className="text-sm font-medium">{statusMessage}</p>
-                </div>
-              )}
-
-              {/* Submit Button */}
-              <button
-                type="submit"
-                disabled={isLoading || amount < 10000}
-                className="w-full flex items-center justify-center gap-2 py-5 bg-orange-500 text-white rounded-2xl font-bold text-lg hover:bg-orange-600 transition-all focus:ring-4 focus:ring-orange-500/20 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-orange-500/25"
-              >
+                {/* States: Loading / Error / Empty / Grid */}
                 {isLoading ? (
-                  <>
-                    <Loader2 className="w-6 h-6 animate-spin" />
-                    Memproses...
-                  </>
+                    <div className="flex flex-col items-center justify-center py-32">
+                        <Loader2 className="w-12 h-12 text-orange-500 animate-spin mb-4" />
+                        <p className="text-teal-800 font-medium">Memuat kampanye...</p>
+                    </div>
+                ) : error ? (
+                    <div className="flex flex-col items-center justify-center py-32 text-center">
+                        <AlertCircle className="w-16 h-16 text-red-400 mb-4" />
+                        <h3 className="text-xl font-bold text-teal-950 mb-2">Gagal Memuat Data</h3>
+                        <p className="text-slate-500 max-w-sm">{error}</p>
+                    </div>
+                ) : campaigns.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center py-32 text-center">
+                        <Heart className="w-16 h-16 text-teal-100 mb-4" />
+                        <h3 className="text-xl font-bold text-teal-950 mb-2">Belum Ada Kampanye Aktif</h3>
+                        <p className="text-slate-500 mb-6">Jadilah yang pertama membuka penggalangan dana untuk hewan yang membutuhkan!</p>
+                        <Link href="/donate/new" className="px-6 py-3 bg-orange-500 text-white font-bold rounded-xl hover:bg-orange-600 transition-colors">
+                            Buka Kampanye Pertama
+                        </Link>
+                    </div>
                 ) : (
-                  <>
-                    <Heart className="w-6 h-6 fill-white" />
-                    Donasi Rp {amount.toLocaleString('id-ID')} Sekarang
-                  </>
+                    /* Campaign Grid */
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {campaigns.map((campaign) => {
+                            const collected = Number(campaign.collected_amount) || 0;
+                            const target = Number(campaign.target_amount) || 1;
+                            const progress = Math.min(Math.round((collected / target) * 100), 100);
+
+                            // Hitung sisa hari dari end_date
+                            const endDate = campaign.end_date ? new Date(campaign.end_date) : null;
+                            const today = new Date();
+                            const daysLeft = endDate
+                                ? Math.max(0, Math.ceil((endDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)))
+                                : null;
+
+                            return (
+                                <div key={campaign.id} className="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-teal-50 flex flex-col group">
+                                    <div className="relative h-56 overflow-hidden bg-slate-100">
+                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                        <img
+                                            src={campaign.image_url || 'https://images.unsplash.com/photo-1574144611937-0df059b5ef3e?w=800&q=80'}
+                                            alt={campaign.title}
+                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                        />
+                                        <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm">
+                                            <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                                            <span className="text-xs font-bold text-teal-900">Terverifikasi</span>
+                                        </div>
+                                    </div>
+
+                                    <div className="p-6 flex flex-col flex-1">
+                                        <p className="text-sm text-teal-600 font-semibold mb-2">{campaign.organizer}</p>
+                                        <h3 className="text-xl font-bold text-teal-950 leading-snug mb-4 line-clamp-2 hover:text-orange-500 transition-colors">
+                                            {campaign.title}
+                                        </h3>
+
+                                        {/* Progress Bar Area */}
+                                        <div className="mt-auto space-y-4">
+                                            <div>
+                                                <div className="flex justify-between text-sm mb-2">
+                                                    <span className="font-bold text-teal-900">Rp {collected.toLocaleString('id-ID')}</span>
+                                                    <span className="text-teal-600">terkumpul</span>
+                                                </div>
+                                                <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                                                    <div
+                                                        className="bg-orange-500 h-2.5 rounded-full transition-all duration-1000"
+                                                        style={{ width: `${progress}%` }}
+                                                    ></div>
+                                                </div>
+                                                <div className="flex justify-between text-xs mt-2 text-slate-500">
+                                                    <span className="flex items-center gap-1"><Target className="w-3.5 h-3.5" /> Target Rp {target.toLocaleString('id-ID')}</span>
+                                                    <span className="font-bold text-orange-500">{progress}%</span>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+                                                <div className="flex items-center gap-4 text-sm font-medium text-slate-600">
+                                                    <span className="flex items-center gap-1.5"><Users className="w-4 h-4 text-teal-500" /> {campaign.donators_count || 0} donatur</span>
+                                                    {daysLeft !== null && (
+                                                        <span className="flex items-center gap-1.5">
+                                                            <TrendingUp className="w-4 h-4 text-teal-500" />
+                                                            {daysLeft > 0 ? `${daysLeft} hari lagi` : 'Berakhir'}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            {/* Button menuju detail/form donasi */}
+                                            <Link href={`/donate/${campaign.id}`} className="block w-full">
+                                                <button className="w-full py-3 bg-teal-50 text-teal-700 font-bold rounded-xl hover:bg-teal-700 hover:text-white transition-colors border border-teal-100 mt-2">
+                                                    Donasi Sekarang
+                                                </button>
+                                            </Link>
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
                 )}
-              </button>
-            </form>
-          </div>
 
-          {/* Info Trust & Transparansi (Kanan) */}
-          <div className="w-full lg:w-2/5 space-y-6 mt-10 lg:mt-0">
-            <div className="bg-white rounded-3xl shadow-sm border border-teal-50 p-8">
-              <h3 className="text-xl font-bold text-teal-950 mb-6 flex items-center gap-2">
-                <ShieldCheck className="w-6 h-6 text-emerald-500" />
-                Donasi Anda Aman
-              </h3>
-              <ul className="space-y-6">
-                <li className="flex gap-4">
-                  <div className="w-12 h-12 rounded-full bg-teal-50 flex items-center justify-center shrink-0">
-                    <CreditCard className="w-6 h-6 text-teal-600" />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-teal-900">Pembayaran Terverifikasi</h4>
-                    <p className="text-sm text-teal-700/70 mt-1">Sistem pembayaran kami dienkripsi dan diproses oleh *payment gateway* resmi berstandar nasional.</p>
-                  </div>
-                </li>
-                <li className="flex gap-4">
-                  <div className="w-12 h-12 rounded-full bg-teal-50 flex items-center justify-center shrink-0">
-                    <Heart className="w-6 h-6 text-teal-600" />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-teal-900">100% Untuk Hewan</h4>
-                    <p className="text-sm text-teal-700/70 mt-1">PawConnect tidak mengambil potongan administrasi dari donasi Anda. Sepenuhnya untuk shelter.</p>
-                  </div>
-                </li>
-              </ul>
             </div>
-
-            <div className="bg-teal-900 rounded-3xl p-8 text-white relative overflow-hidden">
-              <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-teal-800 rounded-full opacity-50 blur-xl"></div>
-              <h3 className="text-xl font-bold mb-3 relative z-10">Ingin Mengadopsi Saja?</h3>
-              <p className="text-teal-100 text-sm mb-6 relative z-10 leading-relaxed">
-                Selain donasi dana, memberikan tempat tinggal yang hangat adalah donasi terbaik yang bisa Anda berikan.
-              </p>
-              <Link href="/pets" className="inline-flex items-center gap-2 px-6 py-3 bg-white text-teal-950 font-bold rounded-xl hover:bg-teal-50 transition-colors relative z-10 w-full justify-center">
-                Lihat Katalog Hewan <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-          </div>
-
         </div>
-      </div>
-    </div>
-  );
+    );
 }

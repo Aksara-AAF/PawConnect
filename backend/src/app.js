@@ -9,6 +9,8 @@ const adoptionRoutes = require('./routes/adoptionRoutes');
 const userRoutes = require('./routes/userRoutes');
 const authRoutes = require('./routes/authRoutes');
 const donationRoutes = require('./routes/donationRoutes');
+const campaignRoutes = require('./routes/campaignRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 
 const app = express();
 
@@ -28,6 +30,8 @@ app.use('/api/pets', petRoutes);
 app.use('/api/adoptions', adoptionRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/donations', donationRoutes);
+app.use('/api/campaigns', campaignRoutes);
+app.use('/api/admin', adminRoutes);
 
 app.use(errorHandler);
 

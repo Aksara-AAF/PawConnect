@@ -2,14 +2,15 @@ const pool = require('../config/database');
 
 const insert = async (donationData) => {
   const query = `
-    INSERT INTO donations (donor_id, amount, message)
-    VALUES ($1, $2, $3)
-    RETURNING id, donor_id, amount, message, payment_status, created_at
+    INSERT INTO donations (donor_id, amount, message, campaign_id, payment_status)
+    VALUES ($1, $2, $3, $4, 'Success')
+    RETURNING id, donor_id, amount, message, campaign_id, payment_status, created_at
   `;
   const values = [
     donationData.donor_id,
     donationData.amount,
-    donationData.message || null
+    donationData.message || null,
+    donationData.campaign_id || null,
   ];
   const result = await pool.query(query, values);
   return result.rows[0];

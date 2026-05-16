@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { Heart, ShieldCheck, CreditCard, Coffee, Gift, ArrowRight, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Heart, ShieldCheck, CreditCard, Coffee, Gift, ArrowRight, Loader2, CheckCircle2, AlertCircle, Target, Users } from 'lucide-react';
 import { fetchApi } from '@/lib/api';
 
 const PRESET_AMOUNTS = [
@@ -12,12 +13,28 @@ const PRESET_AMOUNTS = [
 ];
 
 export default function DonatePage() {
+  const params = useParams();
+  const campaignId = params?.id as string | undefined;
+
+  const [campaign, setCampaign] = useState<any>(null);
   const [amount, setAmount] = useState<number>(100000);
   const [customAmount, setCustomAmount] = useState<string>('');
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [statusMessage, setStatusMessage] = useState('');
+
+  const fetchCampaign = useCallback(async () => {
+    if (!campaignId) return;
+    try {
+      const res = await fetchApi(`/campaigns/${campaignId}`);
+      setCampaign(res.data);
+    } catch {
+      // campaign tidak ditemukan, biarkan null
+    }
+  }, [campaignId]);
+
+  useEffect(() => { fetchCampaign(); }, [fetchCampaign]);
 
   const handlePresetClick = (value: number) => {
     setAmount(value);
@@ -49,7 +66,11 @@ export default function DonatePage() {
     try {
       await fetchApi('/donations', {
         method: 'POST',
-        body: JSON.stringify({ amount, message: message || null }),
+        body: JSON.stringify({
+          amount,
+          message: message || null,
+          ...(campaignId ? { campaign_id: campaignId } : {}),
+        }),
       });
 
       setStatus('success');
@@ -57,6 +78,8 @@ export default function DonatePage() {
       setAmount(100000);
       setCustomAmount('');
       setMessage('');
+      // Re-fetch campaign agar progress bar langsung update
+      await fetchCampaign();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Terjadi kesalahan. Silakan coba lagi.';
       setStatus('error');
@@ -69,6 +92,11 @@ export default function DonatePage() {
       setIsLoading(false);
     }
   };
+
+  // Hitung progress dari data campaign terbaru
+  const collected = Number(campaign?.collected_amount) || 0;
+  const target = Number(campaign?.target_amount) || 1;
+  const progress = Math.min(Math.round((collected / target) * 100), 100);
 
   return (
     <div className="min-h-screen bg-slate-50 pb-24">
@@ -203,6 +231,41 @@ export default function DonatePage() {
 
           {/* Info Trust & Transparansi (Kanan) */}
           <div className="w-full lg:w-2/5 space-y-6 mt-10 lg:mt-0">
+
+            {/* Campaign Progress Card */}
+            {campaign && (
+              <div className="bg-white rounded-3xl shadow-sm border border-teal-50 p-6">
+                <div className="flex items-center gap-2 mb-1">
+                  <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                  <span className="text-xs font-bold text-teal-600 uppercase tracking-wider">{campaign.organizer}</span>
+                </div>
+                <h2 className="text-lg font-bold text-teal-950 mb-4 leading-snug">{campaign.title}</h2>
+
+                <div className="space-y-3">
+                  <div className="flex justify-between items-baseline">
+                    <span className="text-2xl font-black text-orange-500">
+                      Rp {collected.toLocaleString('id-ID')}
+                    </span>
+                    <span className="text-sm text-teal-600">terkumpul</span>
+                  </div>
+                  <div className="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
+                    <div
+                      className="bg-orange-500 h-3 rounded-full transition-all duration-700"
+                      style={{ width: `${progress}%` }}
+                    />
+                  </div>
+                  <div className="flex justify-between text-xs text-slate-500">
+                    <span className="flex items-center gap-1"><Target className="w-3.5 h-3.5" /> Target Rp {target.toLocaleString('id-ID')}</span>
+                    <span className="font-bold text-orange-500">{progress}%</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-sm text-teal-600 font-medium pt-1 border-t border-slate-100">
+                    <Users className="w-4 h-4" />
+                    {campaign.donators_count || 0} donatur telah berpartisipasi
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="bg-white rounded-3xl shadow-sm border border-teal-50 p-8">
               <h3 className="text-xl font-bold text-teal-950 mb-6 flex items-center gap-2">
                 <ShieldCheck className="w-6 h-6 text-emerald-500" />

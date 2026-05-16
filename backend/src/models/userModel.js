@@ -2,7 +2,7 @@ const pool = require('../config/database');
 
 const findById = async (id) => {
   const query = `
-    SELECT id, name, email, phone, profile_image_url, is_verified_shelter, created_at 
+    SELECT id, name, email, phone, profile_image_url, is_verified_shelter, role, created_at 
     FROM users 
     WHERE id = $1
   `;
@@ -33,8 +33,20 @@ const create = async (userData) => {
   return result.rows[0];
 };
 
+const apply = async (userId) => {
+  const query = `
+    UPDATE users
+    SET shelter_requested = true
+    WHERE id = $1 AND is_verified_shelter = false
+    RETURNING id, name, email, shelter_requested, is_verified_shelter
+  `;
+  const result = await pool.query(query, [userId]);
+  return result.rows[0] || null;
+};
+
 module.exports = {
   findById,
   findByEmail,
   create,
+  apply,
 };

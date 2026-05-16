@@ -51,10 +51,22 @@ const getMyDonations = async (req, res, next) => {
   }
 };
 
+const applyShelter = async (req, res, next) => {
+  try {
+    const userId = req.user.userId;
+    const data = await userService.applyShelter(userId);
+    return success(res, data, 'Pengajuan verifikasi shelter berhasil dikirim');
+  } catch (err) {
+    if (err.statusCode === 400) return error(res, err.message, 400);
+    next(err);
+  }
+};
+
 module.exports = {
   getUserPets,
   getMyPets,
   getMyRequests,
   getIncomingRequests,
   getMyDonations,
+  applyShelter,
 };
