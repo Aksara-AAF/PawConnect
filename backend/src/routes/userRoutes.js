@@ -3,7 +3,12 @@ const router = express.Router();
 const userController = require('../controllers/userController');
 const { authenticate } = require('../middleware/authMiddleware');
 
-router.get('/:id/pets', userController.getUserPets);
+// Routes with /me/* must be declared BEFORE /:id/* to avoid route conflicts
+router.get('/me/pets', authenticate, userController.getMyPets);
+router.get('/me/requests', authenticate, userController.getMyRequests);
+router.get('/me/incoming', authenticate, userController.getIncomingRequests);
 router.get('/me/donations', authenticate, userController.getMyDonations);
+
+router.get('/:id/pets', userController.getUserPets);
 
 module.exports = router;

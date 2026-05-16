@@ -1,16 +1,9 @@
 const adoptionService = require('../services/adoptionService');
-const { success } = require('../utils/responseHelper');
+const { success, error } = require('../utils/responseHelper');
 
 const createRequest = async (req, res, next) => {
   try {
-    const adopterId = req.body.adopter_id;
-
-    if (!adopterId) {
-      const err = new Error('Adopter ID wajib disertakan untuk simulasi saat ini');
-      err.statusCode = 401;
-      throw err;
-    }
-
+    const adopterId = req.user.userId;
     const newRequest = await adoptionService.createRequest(req.body, adopterId);
     return success(res, newRequest, 'Pengajuan adopsi berhasil dikirim', 201);
   } catch (err) {
@@ -21,12 +14,10 @@ const createRequest = async (req, res, next) => {
 const updateRequestStatus = async (req, res, next) => {
   try {
     const { status } = req.body;
-    const uploaderId = req.body.uploader_id;
+    const uploaderId = req.user.userId;
 
-    if (!uploaderId) {
-      const err = new Error('Uploader ID wajib disertakan untuk otorisasi simulasi');
-      err.statusCode = 401;
-      throw err;
+    if (!status) {
+      return error(res, 'Status wajib disertakan', 400);
     }
 
     const updatedRequest = await adoptionService.updateRequestStatus(

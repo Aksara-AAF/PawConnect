@@ -28,9 +28,8 @@ const getPetById = async (req, res, next) => {
 
 const createPet = async (req, res, next) => {
   try {
-    const uploaderId = req.body.uploader_id;
-
-    const newPet = await petService.createPet(req.body, uploaderId);
+    const uploaderId = req.user.userId;
+    const newPet = await petService.createPet(req.body, uploaderId, req.file);
     await invalidatePetsCache();
     return success(res, newPet, 'Hewan berhasil ditambahkan', 201);
   } catch (err) {
@@ -40,13 +39,8 @@ const createPet = async (req, res, next) => {
 
 const updatePet = async (req, res, next) => {
   try {
-    const userId = req.body.uploader_id;
-
-    const updatedPet = await petService.updatePet(
-      req.params.id,
-      req.body,
-      userId
-    );
+    const userId = req.user.userId;
+    const updatedPet = await petService.updatePet(req.params.id, req.body, userId, req.file);
     await invalidatePetsCache();
     return success(res, updatedPet, 'Data hewan berhasil diperbarui');
   } catch (err) {
@@ -56,12 +50,8 @@ const updatePet = async (req, res, next) => {
 
 const deletePet = async (req, res, next) => {
   try {
-    const userId = req.query.user_id;
-
-    const deletedPet = await petService.deletePet(
-      req.params.id,
-      userId
-    );
+    const userId = req.user.userId;
+    const deletedPet = await petService.deletePet(req.params.id, userId);
     await invalidatePetsCache();
     return success(res, deletedPet, 'Hewan berhasil dihapus');
   } catch (err) {
