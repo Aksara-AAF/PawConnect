@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { Suspense, useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { PawPrint, AlertCircle, Loader2, Plus } from 'lucide-react';
 import { fetchApi } from '@/lib/api';
 import { Pet } from '@/lib/mockData';
@@ -8,12 +9,21 @@ import { PetCard } from '@/components/pets/PetCard';
 import { PetFilter } from '@/components/pets/PetFilter';
 import Link from 'next/link';
 
-export default function CatalogPage() {
+function CatalogContent() {
+  const searchParams = useSearchParams();
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedSpecies, setSelectedSpecies] = useState('Semua');
+  const [selectedSpecies, setSelectedSpecies] = useState(() => {
+    const species = searchParams.get('species');
+    return species ? species : 'Semua';
+  });
   const [pets, setPets] = useState<Pet[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const species = searchParams.get('species');
+    setSelectedSpecies(species ? species : 'Semua');
+  }, [searchParams]);
 
   useEffect(() => {
     const loadPets = async () => {
@@ -122,5 +132,17 @@ export default function CatalogPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function CatalogPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="w-10 h-10 border-4 border-orange-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    }>
+      <CatalogContent />
+    </Suspense>
   );
 }

@@ -27,7 +27,7 @@ export default async function Home() {
 
             <main className="flex-1 overflow-y-auto snap-y snap-mandatory relative scroll-smooth bg-slate-50">
 
-                {/* 1. HERO SECTION (PUTIH) */}
+                {/* 1. HERO SECTION */}
                 <section className="snap-start snap-always shrink-0 relative flex flex-col justify-center w-full h-full overflow-hidden bg-white">
                     <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 relative z-10">
                         <div className="flex flex-col items-center gap-12 py-12 lg:flex-row">
@@ -53,7 +53,6 @@ export default async function Home() {
                             </div>
 
                             <div className="relative flex-1 w-full max-w-lg lg:max-w-none h-[350px] lg:h-[500px] rounded-[2rem] overflow-hidden shadow-2xl border-4 border-white transform lg:rotate-2 transition-transform hover:rotate-0 duration-500">
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Anjing beagle lucu" className="object-cover w-full h-full" />
                             </div>
                         </div>
@@ -63,7 +62,7 @@ export default async function Home() {
                     <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-[400px] h-[400px] bg-orange-50 rounded-full blur-3xl opacity-50 pointer-events-none z-0"></div>
                 </section>
 
-                {/* 2. QUICK SEARCH CATEGORIES (HIJAU GELAP) */}
+                {/* 2. QUICK SEARCH CATEGORIES  */}
                 <section className="snap-start snap-always shrink-0 relative flex flex-col justify-center w-full h-full bg-teal-900 pb-16">
                     <div className="px-4 py-10 text-center relative z-10">
                         <h2 className="text-3xl font-bold text-white sm:text-4xl">Cari Sahabat Baru Anda</h2>
@@ -99,7 +98,7 @@ export default async function Home() {
                     </div>
                 </section>
 
-                {/* 3. PREVIEW KATALOG (PUTIH) */}
+                {/* 3. PREVIEW KATALOG */}
                 <section className="snap-start snap-always shrink-0 relative flex flex-col justify-center w-full h-full bg-slate-50">
                     <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 w-full">
                         <div className="flex items-end justify-between mb-8">
@@ -116,7 +115,6 @@ export default async function Home() {
                             {topPets.length > 0 ? topPets.map((pet: any, index: number) => (
                                 <Link key={pet.id} href={`/pets/${pet.id}`} className={`${index >= 2 ? 'hidden lg:block' : ''} group bg-white rounded-2xl overflow-hidden shadow-md border border-teal-100 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 cursor-pointer`}>
                                     <div className="h-40 sm:h-48 overflow-hidden relative bg-teal-900">
-                                        {/* eslint-disable-next-line @next/next/no-img-element */}
                                         <img src={pet.image_url} alt={pet.name || pet.species} className="absolute inset-0 w-full h-full object-cover z-10" />
                                         <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-teal-800 z-20">{pet.species}</div>
                                     </div>
@@ -143,7 +141,7 @@ export default async function Home() {
                     </div>
                 </section>
 
-                {/* 4. FEATURES SECTION (HIJAU MUDA) */}
+                {/* 4. FEATURES SECTION */}
                 <section className="snap-start snap-always shrink-0 relative flex flex-col justify-center w-full h-full bg-teal-50">
                     <div className="px-6 py-10 sm:px-12 lg:px-24 max-w-6xl mx-auto w-full">
                         <div className="mb-12 text-center">
@@ -176,10 +174,9 @@ export default async function Home() {
                     </div>
                 </section>
 
-                {/* WADAH GABUNGAN: CTA & FOOTER (TIDAK ADA SNAP DI DALAMNYA) */}
                 <div className="snap-start snap-always shrink-0 flex flex-col w-full">
 
-                    {/* 5. CTA SECTION (PUTIH KEMBALI) - Dibuat min-h agar tinggi konten menyesuaikan, tapi scroll bebas */}
+                    {/* 5. CTA SECTION*/}
                     <section className="relative flex flex-col justify-center px-6 py-32 overflow-hidden text-center bg-white sm:px-12 lg:px-24 min-h-[calc(100vh-4rem)]">
                         <div className="relative z-10 max-w-4xl mx-auto space-y-8">
                             <h2 className="text-3xl font-bold text-teal-950 sm:text-4xl">Siap Mengubah Kehidupan Mereka?</h2>
@@ -193,7 +190,7 @@ export default async function Home() {
                         <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, #134e4a 1px, transparent 0)', backgroundSize: '32px 32px' }}></div>
                     </section>
 
-                    {/* 6. FOOTER (HITAM) - Bergabung di bawah CTA, ikut scroll dengan normal */}
+                    {/* 6. FOOTER */}
                     <div className="bg-zinc-950 w-full shrink-0">
                         <Footer />
                     </div>
