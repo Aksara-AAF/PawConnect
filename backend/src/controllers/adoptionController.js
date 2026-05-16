@@ -1,5 +1,6 @@
 const adoptionService = require('../services/adoptionService');
 const { success, error } = require('../utils/responseHelper');
+const { invalidatePetsCache } = require('../middleware/cacheMiddleware');
 
 const createRequest = async (req, res, next) => {
   try {
@@ -25,6 +26,7 @@ const updateRequestStatus = async (req, res, next) => {
       status,
       uploaderId
     );
+    await invalidatePetsCache();
     return success(res, updatedRequest, `Status pengajuan berhasil diubah menjadi ${status}`);
   } catch (err) {
     next(err);

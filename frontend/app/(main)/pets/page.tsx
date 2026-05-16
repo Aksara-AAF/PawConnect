@@ -19,8 +19,12 @@ function CatalogContent() {
   const [pets, setPets] = useState<Pet[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
+    const user = localStorage.getItem('user');
+    if (user) setIsLoggedIn(true);
+    
     const species = searchParams.get('species');
     setSelectedSpecies(species ? species : 'Semua');
   }, [searchParams]);
@@ -76,7 +80,7 @@ function CatalogContent() {
               <PawPrint className="w-5 h-5 animate-pulse" />
               <span>{filteredPets.length} hewan tersedia</span>
             </div>
-            <Link href="/pets/new" className="flex items-center gap-2 text-white font-bold bg-teal-700 hover:bg-teal-800 px-5 py-2.5 rounded-full shadow-md transition-colors">
+            <Link href={isLoggedIn ? "/pets/new" : "/login"} className="flex items-center gap-2 text-white font-bold bg-teal-700 hover:bg-teal-800 px-5 py-2.5 rounded-full shadow-md transition-colors">
               <Plus className="w-5 h-5" />
               <span>Posting Hewan</span>
             </Link>

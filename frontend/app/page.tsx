@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import { PetCard } from '@/components/pets/PetCard';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
@@ -113,19 +114,9 @@ export default async function Home() {
 
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
               {topPets.length > 0 ? topPets.map((pet: any, index: number) => (
-                <Link key={pet.id} href={`/pets/${pet.id}`} className={`${index >= 2 ? 'hidden lg:block' : ''} group bg-white rounded-2xl overflow-hidden shadow-md border border-teal-100 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 cursor-pointer`}>
-                  <div className="h-40 sm:h-48 overflow-hidden relative bg-teal-900">
-                    <img src={pet.image_url} alt={pet.name || pet.species} className="absolute inset-0 w-full h-full object-cover z-10" />
-                    <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-teal-800 z-20">{pet.species}</div>
-                  </div>
-                  <div className="p-4 sm:p-5 relative z-20 bg-white border-t border-teal-50">
-                    <h3 className="text-xl font-bold text-teal-950 group-hover:text-orange-500 transition-colors">{pet.name}</h3>
-                    <p className="text-teal-700/70 text-sm mt-1 flex items-center">
-                      <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                      {pet.location}
-                    </p>
-                  </div>
-                </Link>
+                <div key={pet.id} className={index >= 2 ? 'hidden lg:block' : ''}>
+                  <PetCard pet={pet} />
+                </div>
               )) : (
                 <div className="col-span-2 lg:col-span-4 text-center py-12 text-teal-700/60 bg-white rounded-2xl border border-dashed border-teal-200">
                   Belum ada hewan tersedia saat ini.

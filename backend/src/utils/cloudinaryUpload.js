@@ -21,14 +21,29 @@ const uploadImage = async (fileBuffer, folder = 'pawconnect/pets') => {
   };
 };
 
-const deleteImage = async (urlOrPublicId) => {
+const uploadVideo = async (fileBuffer, folder = 'pawconnect/pets/videos') => {
+  return new Promise((resolve, reject) => {
+    cloudinary.uploader.upload_stream({
+      folder,
+      resource_type: 'video',
+    }, (error, result) => {
+      if (error) reject(error);
+      else resolve({
+        url: result.secure_url,
+        publicId: result.public_id,
+      });
+    }).end(fileBuffer);
+  });
+};
+
+const deleteImage = async (urlOrPublicId, resourceType = 'image') => {
   if (!urlOrPublicId) return;
   const publicId = urlOrPublicId.startsWith('http')
     ? extractPublicId(urlOrPublicId)
     : urlOrPublicId;
   if (publicId) {
-    await cloudinary.uploader.destroy(publicId);
+    await cloudinary.uploader.destroy(publicId, { resource_type: resourceType });
   }
 };
 
-module.exports = { uploadImage, deleteImage, extractPublicId };
+module.exports = { uploadImage, uploadVideo, deleteImage, extractPublicId };

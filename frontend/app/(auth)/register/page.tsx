@@ -2,11 +2,15 @@
 
 import { useState, useRef } from 'react';
 import Link from 'next/link';
-import { Mail, Lock, User, Phone, PawPrint, Heart, Camera } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Mail, Lock, User, Phone, PawPrint, Heart, Camera, AlertCircle } from 'lucide-react';
+import { fetchApi } from '@/lib/api';
 
 export default function RegisterPage() {
+    const router = useRouter();
     const [formData, setFormData] = useState({ name: '', email: '', phone: '', password: '' });
     const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     const [profilePic, setProfilePic] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -28,9 +32,19 @@ export default function RegisterPage() {
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
-        console.log('Register text data:', formData);
-        console.log('Profile picture file:', profilePic);
-        setTimeout(() => setIsLoading(false), 1500);
+        setError(null);
+        try {
+            await fetchApi('/auth/register', {
+                method: 'POST',
+                body: JSON.stringify(formData),
+            });
+            alert('Registrasi berhasil! Silakan login.');
+            router.push('/login');
+        } catch (err: any) {
+            setError(err.message || 'Registrasi gagal. Silakan coba lagi.');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -71,6 +85,13 @@ export default function RegisterPage() {
                         <h1 className="text-3xl font-extrabold text-teal-950">Buat Akun Baru</h1>
                         <p className="mt-2 text-teal-700/70">Lengkapi data diri kamu di bawah ini.</p>
                     </div>
+
+                    {error && (
+                        <div className="flex items-center gap-3 p-4 bg-red-50 border border-red-100 rounded-xl text-red-600 text-sm animate-shake">
+                            <AlertCircle className="w-5 h-5 shrink-0" />
+                            <p className="font-medium">{error}</p>
+                        </div>
+                    )}
 
                     <form onSubmit={handleRegister} className="space-y-5 mt-8">
 
