@@ -24,14 +24,10 @@ export function AdoptionModal({ isOpen, onClose, petName, petId }: AdoptionModal
     setError(null);
     
     try {
-      // Menggunakan ID Nabil sebagai adopter untuk simulasi
-      const adopterId = '33333333-3333-4333-a333-333333333333';
-      
       await fetchApi('/adoptions', {
         method: 'POST',
         body: JSON.stringify({
           pet_id: petId,
-          adopter_id: adopterId,
           application_reason: reason
         })
       });
@@ -69,7 +65,7 @@ export function AdoptionModal({ isOpen, onClose, petName, petId }: AdoptionModal
           <textarea 
             value={reason}
             onChange={(e) => setReason(e.target.value)}
-            className="flex min-h-[120px] w-full rounded-xl border border-teal-100 bg-white px-3 py-2 text-sm placeholder:text-teal-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 dark:border-teal-800 dark:bg-teal-950 dark:placeholder:text-teal-500 transition-colors" 
+            className="flex min-h-[120px] w-full rounded-xl border border-teal-100 bg-white px-3 py-2 text-sm placeholder:text-teal-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 dark:border-teal-800 dark:bg-teal-950 dark:text-white dark:placeholder:text-teal-500 transition-colors" 
             placeholder="Ceritakan tentang pengalaman Anda pelihara hewan, kondisi rumah, dan alasan memilih hewan ini..."
             required
           />

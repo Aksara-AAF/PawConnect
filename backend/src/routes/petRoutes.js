@@ -7,8 +7,8 @@ const upload = require('../middleware/uploadMiddleware');
 
 router.get('/', cachePets, petController.getAllPets);
 router.get('/:id', petController.getPetById);
-router.post('/', authenticate, upload.single('image'), petController.createPet);
-router.put('/:id', authenticate, upload.single('image'), petController.updatePet);
+router.post('/', authenticate, upload.fields([{ name: 'image', maxCount: 1 }, { name: 'video', maxCount: 1 }]), petController.createPet);
+router.put('/:id', authenticate, upload.fields([{ name: 'image', maxCount: 1 }, { name: 'video', maxCount: 1 }]), petController.updatePet);
 router.delete('/:id', authenticate, petController.deletePet);
 
 module.exports = router;

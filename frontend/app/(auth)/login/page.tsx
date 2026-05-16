@@ -2,18 +2,36 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Mail, Lock, PawPrint, ArrowRight } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Mail, Lock, PawPrint, ArrowRight, AlertCircle } from 'lucide-react';
+import { fetchApi } from '@/lib/api';
 
 export default function LoginPage() {
+    const router = useRouter();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
-        console.log('Login attempt:', { email, password });
-        setTimeout(() => setIsLoading(false), 1000);
+        setError(null);
+        try {
+            const res = await fetchApi('/auth/login', {
+                method: 'POST',
+                body: JSON.stringify({ email, password }),
+            });
+            // Simpan data user ke localStorage untuk Navbar & Dashboard
+            localStorage.setItem('user', JSON.stringify(res.data));
+            
+            router.push('/dashboard');
+            router.refresh();
+        } catch (err: any) {
+            setError(err.message || 'Login gagal. Periksa email dan password Anda.');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -50,6 +68,13 @@ export default function LoginPage() {
                         <h1 className="text-3xl font-extrabold text-teal-950">Masuk ke Akun</h1>
                         <p className="mt-2 text-teal-700/70">Masukkan email dan password untuk melanjutkan.</p>
                     </div>
+
+                    {error && (
+                        <div className="flex items-center gap-3 p-4 bg-red-50 border border-red-100 rounded-xl text-red-600 text-sm animate-shake">
+                            <AlertCircle className="w-5 h-5 shrink-0" />
+                            <p className="font-medium">{error}</p>
+                        </div>
+                    )}
 
                     <form onSubmit={handleLogin} className="space-y-6 mt-8">
                         <div className="space-y-4">

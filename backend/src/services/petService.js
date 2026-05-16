@@ -1,5 +1,5 @@
 const petModel = require('../models/petModel');
-const { uploadImage, deleteImage } = require('../utils/cloudinaryUpload');
+const { uploadImage, uploadVideo, deleteImage } = require('../utils/cloudinaryUpload');
 
 const getAllPets = async (filters) => {
   return await petModel.selectAll(filters);
@@ -15,7 +15,7 @@ const getPetById = async (id) => {
   return pet;
 };
 
-const createPet = async (petData, uploaderId, file) => {
+const createPet = async (petData, uploaderId, files) => {
   if (!petData.name || !petData.species) {
     const err = new Error('Nama dan species hewan wajib diisi');
     err.statusCode = 400;
@@ -23,21 +23,28 @@ const createPet = async (petData, uploaderId, file) => {
   }
 
   let imageUrl = null;
-  if (file) {
-    const uploaded = await uploadImage(file.buffer);
+  if (files && files.image) {
+    const uploaded = await uploadImage(files.image[0].buffer);
     imageUrl = uploaded.url;
+  }
+
+  let videoUrl = null;
+  if (files && files.video) {
+    const uploaded = await uploadVideo(files.video[0].buffer);
+    videoUrl = uploaded.url;
   }
 
   const newPet = await petModel.insert({
     ...petData,
     uploader_id: uploaderId,
     image_url: imageUrl,
+    video_url: videoUrl,
   });
 
   return newPet;
 };
 
-const updatePet = async (id, petData, userId, file) => {
+const updatePet = async (id, petData, userId, files) => {
   const existingPet = await petModel.selectById(id);
 
   if (!existingPet) {
@@ -59,17 +66,32 @@ const updatePet = async (id, petData, userId, file) => {
   }
 
   let imageUrl = existingPet.image_url;
-  if (file) {
+  if (files && files.image) {
     if (existingPet.image_url) {
       await deleteImage(existingPet.image_url).catch((err) =>
         console.error('Cloudinary delete error:', err)
       );
     }
-    const uploaded = await uploadImage(file.buffer);
+    const uploaded = await uploadImage(files.image[0].buffer);
     imageUrl = uploaded.url;
   }
 
-  const updatedPet = await petModel.update(id, { ...petData, image_url: imageUrl });
+  let videoUrl = existingPet.video_url;
+  if (files && files.video) {
+    if (existingPet.video_url) {
+      await deleteImage(existingPet.video_url, 'video').catch((err) =>
+        console.error('Cloudinary delete error:', err)
+      );
+    }
+    const uploaded = await uploadVideo(files.video[0].buffer);
+    videoUrl = uploaded.url;
+  }
+
+  const updatedPet = await petModel.update(id, { 
+    ...petData, 
+    image_url: imageUrl,
+    video_url: videoUrl
+  });
   return updatedPet;
 };
 
@@ -90,6 +112,12 @@ const deletePet = async (id, userId) => {
 
   if (existingPet.image_url) {
     await deleteImage(existingPet.image_url).catch((err) =>
+      console.error('Cloudinary delete error:', err)
+    );
+  }
+
+  if (existingPet.video_url) {
+    await deleteImage(existingPet.video_url, 'video').catch((err) =>
       console.error('Cloudinary delete error:', err)
     );
   }

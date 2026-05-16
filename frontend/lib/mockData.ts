@@ -8,6 +8,7 @@ export interface Pet {
   description: string;
   health_notes: string;
   image_url: string;
+  video_url?: string;
   status: 'Tersedia' | 'Diproses' | 'Diadopsi';
   uploader_name: string;
   created_at: string;

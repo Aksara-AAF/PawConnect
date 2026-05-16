@@ -29,7 +29,7 @@ const getPetById = async (req, res, next) => {
 const createPet = async (req, res, next) => {
   try {
     const uploaderId = req.user.userId;
-    const newPet = await petService.createPet(req.body, uploaderId, req.file);
+    const newPet = await petService.createPet(req.body, uploaderId, req.files);
     await invalidatePetsCache();
     return success(res, newPet, 'Hewan berhasil ditambahkan', 201);
   } catch (err) {
@@ -40,7 +40,7 @@ const createPet = async (req, res, next) => {
 const updatePet = async (req, res, next) => {
   try {
     const userId = req.user.userId;
-    const updatedPet = await petService.updatePet(req.params.id, req.body, userId, req.file);
+    const updatedPet = await petService.updatePet(req.params.id, req.body, userId, req.files);
     await invalidatePetsCache();
     return success(res, updatedPet, 'Data hewan berhasil diperbarui');
   } catch (err) {

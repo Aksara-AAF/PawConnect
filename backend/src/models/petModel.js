@@ -65,8 +65,8 @@ const selectByUploader = async (uploaderId) => {
 
 const insert = async (petData) => {
   const query = `
-    INSERT INTO pets (uploader_id, name, species, gender, age, location, description, health_notes, image_url)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+    INSERT INTO pets (uploader_id, name, species, gender, age, location, description, health_notes, image_url, video_url)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
     RETURNING *
   `;
   const values = [
@@ -79,6 +79,7 @@ const insert = async (petData) => {
     petData.description || null,
     petData.health_notes || null,
     petData.image_url || null,
+    petData.video_url || null,
   ];
   const result = await pool.query(query, values);
   return result.rows[0];
@@ -88,8 +89,8 @@ const update = async (id, petData) => {
   const query = `
     UPDATE pets 
     SET name = $1, species = $2, gender = $3, age = $4, location = $5,
-        description = $6, health_notes = $7, image_url = $8, updated_at = NOW()
-    WHERE id = $9
+        description = $6, health_notes = $7, image_url = $8, video_url = $9, updated_at = NOW()
+    WHERE id = $10
     RETURNING *
   `;
   const values = [
@@ -101,6 +102,7 @@ const update = async (id, petData) => {
     petData.description || null,
     petData.health_notes || null,
     petData.image_url || null,
+    petData.video_url || null,
     id,
   ];
   const result = await pool.query(query, values);

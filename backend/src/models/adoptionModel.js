@@ -53,9 +53,11 @@ const selectByAdopter = async (adopterId) => {
       p.name AS pet_name,
       p.species AS pet_species,
       p.image_url AS pet_image_url,
-      p.status AS pet_status
+      p.status AS pet_status,
+      u.name AS uploader_name
     FROM adoption_requests ar
     JOIN pets p ON ar.pet_id = p.id
+    JOIN users u ON p.uploader_id = u.id
     WHERE ar.adopter_id = $1
     ORDER BY ar.request_date DESC
   `;
