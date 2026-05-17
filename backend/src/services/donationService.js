@@ -73,8 +73,13 @@ const getByDonor = async (donorId) => {
   return await donationModel.selectByDonor(donorId);
 };
 
+const getDonationsByCampaign = async (campaignId) => {
+  return await donationModel.selectByCampaign(campaignId);
+};
+
 module.exports = {
   createDonation,
   confirmDonation,
   getByDonor,
+  getDonationsByCampaign,
 };

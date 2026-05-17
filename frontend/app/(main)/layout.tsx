@@ -1,5 +1,5 @@
-import Navbar from "@/components/Navbar"; // Sesuaikan path jika error, misal: ../../components/Navbar
-import Footer from "@/components/Footer"; // Sesuaikan path jika error, misal: ../../components/Footer
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 export default function MainLayout({
     children,

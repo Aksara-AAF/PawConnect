@@ -41,8 +41,28 @@ const selectByDonor = async (donorId) => {
   return result.rows;
 };
 
+const selectByCampaign = async (campaignId) => {
+  const query = `
+    SELECT
+      d.id,
+      COALESCE(u.name, 'Anonim') AS donor_name,
+      d.amount,
+      d.message,
+      d.payment_status,
+      d.created_at
+    FROM donations d
+    LEFT JOIN users u ON d.donor_id = u.id
+    WHERE d.campaign_id = $1
+      AND d.payment_status = 'Success'
+    ORDER BY d.created_at DESC
+  `;
+  const result = await pool.query(query, [campaignId]);
+  return result.rows;
+};
+
 module.exports = {
   insert,
   confirmPayment,
-  selectByDonor
+  selectByDonor,
+  selectByCampaign
 };

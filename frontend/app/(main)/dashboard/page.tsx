@@ -15,7 +15,11 @@ import {
     Megaphone,
     ShieldCheck,
     ShieldAlert,
-    Clock
+    Clock,
+    ChevronDown,
+    ChevronUp,
+    Users,
+    MessageCircle
 } from 'lucide-react';
 import { fetchApi } from '@/lib/api';
 import Link from 'next/link';
@@ -29,6 +33,9 @@ export default function DashboardPage() {
     const [error, setError] = useState<string | null>(null);
     const [shelterStatus, setShelterStatus] = useState<{ is_verified_shelter: boolean; shelter_requested: boolean } | null>(null);
     const [applyLoading, setApplyLoading] = useState(false);
+    const [expandedCampaign, setExpandedCampaign] = useState<string | null>(null);
+    const [campaignDonors, setCampaignDonors] = useState<Record<string, any[]>>({});
+    const [donorsLoading, setDonorsLoading] = useState<Record<string, boolean>>({});
 
     const fetchData = async (tab: TabType) => {
         setIsLoading(true);
@@ -111,6 +118,24 @@ export default function DashboardPage() {
         }
     };
 
+    const handleToggleDonors = async (campaignId: string) => {
+        if (expandedCampaign === campaignId) {
+            setExpandedCampaign(null);
+            return;
+        }
+        setExpandedCampaign(campaignId);
+        if (campaignDonors[campaignId]) return; // sudah di-cache
+        setDonorsLoading(prev => ({ ...prev, [campaignId]: true }));
+        try {
+            const res = await fetchApi(`/campaigns/${campaignId}/donations`);
+            setCampaignDonors(prev => ({ ...prev, [campaignId]: res.data || [] }));
+        } catch (err: any) {
+            setCampaignDonors(prev => ({ ...prev, [campaignId]: [] }));
+        } finally {
+            setDonorsLoading(prev => ({ ...prev, [campaignId]: false }));
+        }
+    };
+
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-teal-900/50 py-12">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -146,8 +171,8 @@ export default function DashboardPage() {
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id as TabType)}
                             className={`flex items-center gap-2 px-5 py-3 rounded-xl font-bold transition-all whitespace-nowrap ${activeTab === tab.id
-                                    ? 'bg-orange-500 text-white shadow-md shadow-orange-500/20'
-                                    : 'text-teal-700 dark:text-teal-400 hover:bg-teal-50 dark:hover:bg-teal-900'
+                                ? 'bg-orange-500 text-white shadow-md shadow-orange-500/20'
+                                : 'text-teal-700 dark:text-teal-400 hover:bg-teal-50 dark:hover:bg-teal-900'
                                 }`}
                         >
                             <tab.icon className="w-5 h-5" />
@@ -347,7 +372,7 @@ export default function DashboardPage() {
                                     </div>
                                 </div>
                                 <div className={`px-4 py-2 rounded-full font-bold text-sm ${req.status === 'Diterima' ? 'bg-emerald-100 text-emerald-600' :
-                                        req.status === 'Menunggu' ? 'bg-orange-100 text-orange-600' : 'bg-red-100 text-red-600'
+                                    req.status === 'Menunggu' ? 'bg-orange-100 text-orange-600' : 'bg-red-100 text-red-600'
                                     }`}>
                                     {req.status}
                                 </div>
@@ -375,8 +400,8 @@ export default function DashboardPage() {
                                 </div>
                                 <div className="shrink-0">
                                     <div className={`inline-block px-4 py-1.5 text-sm font-bold rounded-full ${donation.payment_status === 'Success'
-                                            ? 'bg-emerald-50 text-emerald-600 border border-emerald-100'
-                                            : 'bg-yellow-50 text-yellow-600 border border-yellow-100'
+                                        ? 'bg-emerald-50 text-emerald-600 border border-emerald-100'
+                                        : 'bg-yellow-50 text-yellow-600 border border-yellow-100'
                                         }`}>
                                         {donation.payment_status === 'Success' ? 'Berhasil' : donation.payment_status || 'Pending'}
                                     </div>
@@ -387,45 +412,116 @@ export default function DashboardPage() {
                         {/* MY CAMPAIGNS TAB (TAB BARU) */}
                         {activeTab === 'my-campaigns' && data.map((campaign) => {
                             const progress = Math.min(Math.round((campaign.collected_amount / campaign.target_amount) * 100), 100) || 0;
+                            const isExpanded = expandedCampaign === campaign.id;
+                            const donors = campaignDonors[campaign.id] || [];
+                            const isDonorsLoading = donorsLoading[campaign.id];
                             return (
-                                <div key={campaign.id} className="bg-white dark:bg-teal-950 p-6 rounded-3xl border border-teal-100 dark:border-teal-800 shadow-sm flex flex-col md:flex-row gap-6">
-                                    <div className="w-full md:w-48 h-32 rounded-2xl overflow-hidden shrink-0 relative">
-                                        <img src={campaign.image_url} alt={campaign.title} className="w-full h-full object-cover" />
-                                        <div className="absolute top-2 right-2 px-2 py-1 text-xs font-bold rounded-md bg-white/90 text-teal-900 shadow-sm">
-                                            {campaign.is_verified ? 'Verified' : 'Pending'}
+                                <div key={campaign.id} className="bg-white dark:bg-teal-950 rounded-3xl border border-teal-100 dark:border-teal-800 shadow-sm overflow-hidden">
+                                    {/* Campaign main card */}
+                                    <div className="p-6 flex flex-col md:flex-row gap-6">
+                                        <div className="w-full md:w-48 h-32 rounded-2xl overflow-hidden shrink-0 relative">
+                                            <img src={campaign.image_url} alt={campaign.title} className="w-full h-full object-cover" />
+                                            <div className="absolute top-2 right-2 px-2 py-1 text-xs font-bold rounded-md bg-white/90 text-teal-900 shadow-sm">
+                                                {campaign.is_verified ? 'Verified' : 'Pending'}
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="flex-1">
-                                        <h3 className="text-xl font-bold text-teal-950 dark:text-white mb-3">{campaign.title}</h3>
+                                        <div className="flex-1">
+                                            <h3 className="text-xl font-bold text-teal-950 dark:text-white mb-3">{campaign.title}</h3>
 
-                                        <div className="space-y-2">
-                                            <div className="flex justify-between text-sm">
-                                                <span className="font-bold text-teal-900">Rp {(Number(campaign.collected_amount) || 0).toLocaleString('id-ID')} terkumpul</span>
-                                                <span className="text-teal-600">dari Rp {(Number(campaign.target_amount) || 0).toLocaleString('id-ID')}</span>
-                                            </div>
-                                            <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
-                                                <div
-                                                    className="bg-orange-500 h-2.5 rounded-full transition-all duration-1000"
-                                                    style={{ width: `${progress}%` }}
-                                                ></div>
-                                            </div>
-                                            <div className="flex items-center justify-between text-xs text-slate-500 pt-2">
-                                                <span>{campaign.donators_count || 0} Donatur</span>
-                                                <span>Berakhir: {campaign.end_date ? new Date(campaign.end_date).toLocaleDateString('id-ID') : '-'}</span>
+                                            <div className="space-y-2">
+                                                <div className="flex justify-between text-sm">
+                                                    <span className="font-bold text-teal-900">Rp {(Number(campaign.collected_amount) || 0).toLocaleString('id-ID')} terkumpul</span>
+                                                    <span className="text-teal-600">dari Rp {(Number(campaign.target_amount) || 0).toLocaleString('id-ID')}</span>
+                                                </div>
+                                                <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                                                    <div
+                                                        className="bg-orange-500 h-2.5 rounded-full transition-all duration-1000"
+                                                        style={{ width: `${progress}%` }}
+                                                    ></div>
+                                                </div>
+                                                <div className="flex items-center justify-between text-xs text-slate-500 pt-2">
+                                                    <span>{campaign.donators_count || 0} Donatur</span>
+                                                    <span>Berakhir: {campaign.end_date ? new Date(campaign.end_date).toLocaleDateString('id-ID') : '-'}</span>
+                                                </div>
                                             </div>
                                         </div>
+                                        <div className="flex md:flex-col gap-2 justify-center">
+                                            <Link href={`/donate/${campaign.id}`} className="px-4 py-2 bg-teal-50 text-teal-700 text-sm font-bold rounded-xl text-center hover:bg-teal-100 border border-teal-100">
+                                                Lihat Halaman
+                                            </Link>
+                                            <button
+                                                onClick={() => handleDeleteCampaign(campaign.id)}
+                                                className="px-4 py-2 bg-white text-red-500 text-sm font-bold rounded-xl text-center hover:bg-red-50 border border-red-100"
+                                            >
+                                                Hapus
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div className="flex md:flex-col gap-2 justify-center">
-                                        <Link href={`/donate/${campaign.id}`} className="px-4 py-2 bg-teal-50 text-teal-700 text-sm font-bold rounded-xl text-center hover:bg-teal-100 border border-teal-100">
-                                            Lihat Halaman
-                                        </Link>
-                                        <button
-                                            onClick={() => handleDeleteCampaign(campaign.id)}
-                                            className="px-4 py-2 bg-white text-red-500 text-sm font-bold rounded-xl text-center hover:bg-red-50 border border-red-100"
-                                        >
-                                            Hapus
-                                        </button>
-                                    </div>
+
+                                    {/* Toggle Donors Button */}
+                                    <button
+                                        onClick={() => handleToggleDonors(campaign.id)}
+                                        className={`w-full flex items-center justify-between px-6 py-3 text-sm font-bold transition-colors border-t ${isExpanded
+                                                ? 'bg-orange-50 border-orange-100 text-orange-600'
+                                                : 'bg-slate-50 dark:bg-teal-900/30 border-teal-100 dark:border-teal-800 text-teal-600 dark:text-teal-400 hover:bg-teal-50 dark:hover:bg-teal-900/50'
+                                            }`}
+                                    >
+                                        <span className="flex items-center gap-2">
+                                            <Users className="w-4 h-4" />
+                                            {isExpanded ? 'Sembunyikan Donatur' : `Lihat Donatur (${campaign.donators_count || 0})`}
+                                        </span>
+                                        {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                                    </button>
+
+                                    {/* Donors Panel */}
+                                    {isExpanded && (
+                                        <div className="border-t border-orange-100 bg-orange-50/30 dark:bg-teal-900/20">
+                                            {isDonorsLoading ? (
+                                                <div className="flex items-center justify-center gap-3 py-8">
+                                                    <Loader2 className="w-5 h-5 text-orange-500 animate-spin" />
+                                                    <span className="text-sm text-teal-600">Memuat daftar donatur...</span>
+                                                </div>
+                                            ) : donors.length === 0 ? (
+                                                <div className="flex flex-col items-center justify-center py-10 text-center">
+                                                    <Heart className="w-8 h-8 text-slate-300 mb-3" />
+                                                    <p className="text-sm text-slate-400 font-medium">Belum ada donasi masuk</p>
+                                                    <p className="text-xs text-slate-400 mt-1">Bagikan kampanye Anda agar lebih banyak orang tahu!</p>
+                                                </div>
+                                            ) : (
+                                                <div className="divide-y divide-orange-100/60 dark:divide-teal-800">
+                                                    {donors.map((donor, idx) => (
+                                                        <div key={donor.id} className="flex flex-col sm:flex-row sm:items-center gap-3 px-6 py-4 hover:bg-orange-50/60 dark:hover:bg-teal-900/40 transition-colors">
+                                                            {/* Avatar */}
+                                                            <div className="w-9 h-9 shrink-0 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold text-sm shadow-sm">
+                                                                {donor.donor_name?.[0]?.toUpperCase() || '?'}
+                                                            </div>
+                                                            {/* Info */}
+                                                            <div className="flex-1 min-w-0">
+                                                                <div className="flex flex-wrap items-baseline gap-x-2">
+                                                                    <span className="font-bold text-teal-900 dark:text-white text-sm">{donor.donor_name}</span>
+                                                                    <span className="text-xs text-slate-400">
+                                                                        {donor.created_at ? new Date(donor.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '-'}
+                                                                    </span>
+                                                                </div>
+                                                                {donor.message && (
+                                                                    <div className="flex items-start gap-1 mt-1">
+                                                                        <MessageCircle className="w-3 h-3 text-teal-400 shrink-0 mt-0.5" />
+                                                                        <p className="text-xs text-teal-700 dark:text-teal-300 italic line-clamp-2">&ldquo;{donor.message}&rdquo;</p>
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                            {/* Amount */}
+                                                            <div className="shrink-0 text-right">
+                                                                <span className="text-base font-black text-orange-500">
+                                                                    Rp {Number(donor.amount).toLocaleString('id-ID')}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
                                 </div>
                             );
                         })}

@@ -64,10 +64,32 @@ const deleteMyCampaign = async (req, res, next) => {
   }
 };
 
+const getCampaignDonations = async (req, res, next) => {
+  try {
+    const userId = req.user.userId;
+    const { id } = req.params;
+    // Verifikasi kepemilikan: hanya pemilik kampanye yang boleh lihat donaturnya
+    const campaignModel = require('../models/campaignModel');
+    const campaign = await campaignModel.selectById(id);
+    if (!campaign) {
+      return error(res, 'Campaign tidak ditemukan', 404);
+    }
+    if (String(campaign.creator_id) !== String(userId)) {
+      return error(res, 'Anda tidak memiliki akses ke data donatur kampanye ini', 403);
+    }
+    const donationService = require('../services/donationService');
+    const donations = await donationService.getDonationsByCampaign(id);
+    return success(res, donations, 'Daftar donatur berhasil diambil');
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   getAllCampaigns,
   getCampaignById,
   createCampaign,
   getMyCampaigns,
   deleteMyCampaign,
+  getCampaignDonations,
 };
