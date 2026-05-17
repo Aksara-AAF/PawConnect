@@ -1,7 +1,24 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { PawPrint, Heart, Mail, Globe, Phone } from 'lucide-react';
+import { PawPrint, Heart, Mail, Globe, Phone, ShieldCheck } from 'lucide-react';
 
 export default function Footer() {
+    const [isAdmin, setIsAdmin] = useState(false);
+
+    useEffect(() => {
+        const stored = localStorage.getItem('user');
+        if (stored) {
+            try {
+                const user = JSON.parse(stored);
+                setIsAdmin(user.role === 'admin');
+            } catch {
+                setIsAdmin(false);
+            }
+        }
+    }, []);
+
     return (
         <footer className="bg-white dark:bg-zinc-950 border-t border-zinc-200 dark:border-zinc-800 pt-16 pb-8">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -27,6 +44,16 @@ export default function Footer() {
                             <a href="#" className="p-2 bg-zinc-100 dark:bg-zinc-900 rounded-full text-zinc-500 hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-all">
                                 <Phone className="w-4 h-4" />
                             </a>
+                            {/* Tombol Admin — hanya tampil jika role === 'admin' */}
+                            {isAdmin && (
+                                <Link
+                                    href="/admin"
+                                    className="p-2 bg-zinc-100 dark:bg-zinc-900 rounded-full text-zinc-500 hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-all"
+                                    title="Admin Panel"
+                                >
+                                    <ShieldCheck className="w-4 h-4" />
+                                </Link>
+                            )}
                         </div>
                     </div>
 
@@ -50,7 +77,7 @@ export default function Footer() {
                         <h3 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-6">PROYEK AKHIR SBD</h3>
                         <p className="text-zinc-600 dark:text-zinc-400">
                             Dibuat oleh:<br/>
-                            Akbar, Daffa, Nabil, & Zhafarrel.
+                            Akbar, Daffa, Nabil, &amp; Zhafarrel.
                         </p>
                     </div>
                 </div>
@@ -59,7 +86,6 @@ export default function Footer() {
                     <p className="text-zinc-500 dark:text-zinc-500 text-sm">
                         © {new Date().getFullYear()} PawConnect. All rights reserved.
                     </p>
-
                 </div>
             </div>
         </footer>

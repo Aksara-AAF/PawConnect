@@ -73,19 +73,75 @@ export default async function Home() {
             <div className="grid grid-cols-2 gap-4 md:grid-cols-4 sm:gap-6">
               <Link href="/pets?species=Anjing" className="flex flex-col items-center justify-center p-6 transition-all bg-white shadow-lg sm:p-8 rounded-2xl hover:shadow-2xl hover:-translate-y-2 group border border-teal-800">
                 <div className="p-4 transition-colors rounded-full bg-teal-50 text-teal-700 group-hover:bg-orange-100 group-hover:text-orange-600">
-                  <svg className="w-10 h-10 sm:w-14 sm:h-14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                  {/* Anjing - persis seperti referensi */}
+                  <svg className="w-10 h-10 sm:w-14 sm:h-14" viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+                    {/* Telinga kiri: arc dari atas ke bawah sisi kepala */}
+                    <path d="M 17 22 C 5 20, 2 38, 8 46 C 11 51, 19 51, 20 44"/>
+                    {/* Telinga kanan: mirror */}
+                    <path d="M 47 22 C 59 20, 62 38, 56 46 C 53 51, 45 51, 44 44"/>
+                    {/* Kepala — digambar setelah telinga agar menutupi titik sambungan */}
+                    <circle cx="32" cy="34" r="18"/>
+                    {/* Mata kiri — kurva ∩ bahagia */}
+                    <path d="M 22 30 Q 26 25 30 30"/>
+                    {/* Mata kanan — kurva ∩ bahagia */}
+                    <path d="M 34 30 Q 38 25 42 30"/>
+                    {/* Hidung — kotak kecil rounded */}
+                    <rect x="27.5" y="38" width="9" height="6" rx="3" fill="currentColor" stroke="none"/>
+                  </svg>
                 </div>
                 <span className="mt-4 font-bold text-teal-950 sm:text-lg">Anjing</span>
               </Link>
               <Link href="/pets?species=Kucing" className="flex flex-col items-center justify-center p-6 transition-all bg-white shadow-lg sm:p-8 rounded-2xl hover:shadow-2xl hover:-translate-y-2 group border border-teal-800">
                 <div className="p-4 transition-colors rounded-full bg-teal-50 text-teal-700 group-hover:bg-orange-100 group-hover:text-orange-600">
-                  <svg className="w-10 h-10 sm:w-14 sm:h-14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  {/* Kucing - wajah outline dengan telinga segitiga & kumis */}
+                  <svg className="w-10 h-10 sm:w-14 sm:h-14" viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
+                    {/* Kepala */}
+                    <circle cx="32" cy="36" r="20"/>
+                    {/* Telinga kiri segitiga */}
+                    <path d="M 14 22 L 22 6 L 30 22"/>
+                    {/* Telinga kanan segitiga */}
+                    <path d="M 50 22 L 42 6 L 34 22"/>
+                    {/* Mata kiri */}
+                    <circle cx="24" cy="31" r="2.5" fill="currentColor" stroke="none"/>
+                    {/* Mata kanan */}
+                    <circle cx="40" cy="31" r="2.5" fill="currentColor" stroke="none"/>
+                    {/* Hidung segitiga */}
+                    <path d="M 29.5 38 L 32 35 L 34.5 38 Z" fill="currentColor" stroke="none"/>
+                    {/* Mulut */}
+                    <path d="M 32 38 Q 28 43 25 41"/>
+                    <path d="M 32 38 Q 36 43 39 41"/>
+                    {/* Kumis kiri atas */}
+                    <line x1="8" y1="36" x2="26" y2="38"/>
+                    {/* Kumis kiri bawah */}
+                    <line x1="8" y1="42" x2="26" y2="41"/>
+                    {/* Kumis kanan atas */}
+                    <line x1="56" y1="36" x2="38" y2="38"/>
+                    {/* Kumis kanan bawah */}
+                    <line x1="56" y1="42" x2="38" y2="41"/>
+                  </svg>
                 </div>
                 <span className="mt-4 font-bold text-teal-950 sm:text-lg">Kucing</span>
               </Link>
               <Link href="/pets?species=Lainnya" className="flex flex-col items-center justify-center p-6 transition-all bg-white shadow-lg sm:p-8 rounded-2xl hover:shadow-2xl hover:-translate-y-2 group border border-teal-800">
                 <div className="p-4 transition-colors rounded-full bg-teal-50 text-teal-700 group-hover:bg-orange-100 group-hover:text-orange-600">
-                  <svg className="w-10 h-10 sm:w-14 sm:h-14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-4 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm8 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-4 5c-3.31 0-6 2.69-6 6v3h12v-3c0-3.31-2.69-6-6-6z" /></svg>
+                  {/* Kelinci - wajah outline dengan telinga panjang */}
+                  <svg className="w-10 h-10 sm:w-14 sm:h-14" viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
+                    {/* Telinga kiri oval panjang */}
+                    <ellipse cx="22" cy="18" rx="7.5" ry="14"/>
+                    {/* Telinga kanan oval panjang */}
+                    <ellipse cx="42" cy="18" rx="7.5" ry="14"/>
+                    {/* Kepala */}
+                    <circle cx="32" cy="42" r="18"/>
+                    {/* Mata kiri */}
+                    <circle cx="24" cy="38" r="2.5" fill="currentColor" stroke="none"/>
+                    {/* Mata kanan */}
+                    <circle cx="40" cy="38" r="2.5" fill="currentColor" stroke="none"/>
+                    {/* Hidung */}
+                    <circle cx="32" cy="45" r="2" fill="currentColor" stroke="none"/>
+                    {/* Mulut */}
+                    <path d="M 32 47 Q 28 52 25 50"/>
+                    <path d="M 32 47 Q 36 52 39 50"/>
+                  </svg>
                 </div>
                 <span className="mt-4 font-bold text-teal-950 sm:text-lg">Hewan Lainnya</span>
               </Link>

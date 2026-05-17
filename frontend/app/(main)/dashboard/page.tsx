@@ -1,15 +1,15 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { 
-    LayoutDashboard, 
-    PawPrint, 
-    MessageSquare, 
-    Heart, 
-    Trash2, 
-    Check, 
-    X, 
-    Loader2, 
+import {
+    LayoutDashboard,
+    PawPrint,
+    MessageSquare,
+    Heart,
+    Trash2,
+    Check,
+    X,
+    Loader2,
     AlertCircle,
     ArrowRight,
     Megaphone,
@@ -114,7 +114,7 @@ export default function DashboardPage() {
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-teal-900/50 py-12">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                
+
                 <div className="flex items-center justify-between mb-8">
                     <div className="flex items-center gap-4">
                         <div className="p-3 bg-teal-900 text-white rounded-2xl">
@@ -125,7 +125,7 @@ export default function DashboardPage() {
                             <p className="text-teal-700/70 dark:text-teal-400">Kelola aktivitas adopsi dan donasi Anda.</p>
                         </div>
                     </div>
-                    
+
                     {/* Tombol cepat untuk Verified User membuka donasi baru */}
                     <Link href="/donate/new" className="hidden md:flex items-center gap-2 px-6 py-3 bg-orange-500 text-white font-bold rounded-xl shadow-lg hover:bg-orange-600 transition-colors">
                         <Megaphone className="w-5 h-5" /> Buka Penggalangan Dana
@@ -145,11 +145,10 @@ export default function DashboardPage() {
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id as TabType)}
-                            className={`flex items-center gap-2 px-5 py-3 rounded-xl font-bold transition-all whitespace-nowrap ${
-                                activeTab === tab.id 
-                                ? 'bg-orange-500 text-white shadow-md shadow-orange-500/20' 
-                                : 'text-teal-700 dark:text-teal-400 hover:bg-teal-50 dark:hover:bg-teal-900'
-                            }`}
+                            className={`flex items-center gap-2 px-5 py-3 rounded-xl font-bold transition-all whitespace-nowrap ${activeTab === tab.id
+                                    ? 'bg-orange-500 text-white shadow-md shadow-orange-500/20'
+                                    : 'text-teal-700 dark:text-teal-400 hover:bg-teal-50 dark:hover:bg-teal-900'
+                                }`}
                         >
                             <tab.icon className="w-5 h-5" />
                             {tab.label}
@@ -262,7 +261,7 @@ export default function DashboardPage() {
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 gap-6">
-                        
+
                         {/* MY PETS TAB */}
                         {activeTab === 'my-pets' && data.map((pet) => (
                             <div key={pet.id} className="bg-white dark:bg-teal-950 p-4 rounded-3xl border border-teal-100 dark:border-teal-800 shadow-sm flex flex-col md:flex-row gap-6 items-center">
@@ -280,7 +279,7 @@ export default function DashboardPage() {
                                     <Link href={`/pets/${pet.id}`} className="p-3 text-teal-600 hover:bg-teal-50 rounded-xl transition-colors">
                                         <ArrowRight className="w-6 h-6" />
                                     </Link>
-                                    <button 
+                                    <button
                                         onClick={() => handleDeletePet(pet.id)}
                                         className="p-3 text-red-500 hover:bg-red-50 rounded-xl transition-colors"
                                     >
@@ -311,13 +310,13 @@ export default function DashboardPage() {
                                     <div className="flex flex-row md:flex-col gap-2 justify-center">
                                         {req.status === 'Menunggu' ? (
                                             <>
-                                                <button 
+                                                <button
                                                     onClick={() => handleAction(req.id, 'Diterima')}
                                                     className="flex items-center gap-2 px-4 py-2 bg-emerald-500 text-white rounded-xl font-bold hover:bg-emerald-600 transition-all"
                                                 >
                                                     <Check className="w-4 h-4" /> Terima
                                                 </button>
-                                                <button 
+                                                <button
                                                     onClick={() => handleAction(req.id, 'Ditolak')}
                                                     className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-xl font-bold hover:bg-red-600 transition-all"
                                                 >
@@ -325,9 +324,8 @@ export default function DashboardPage() {
                                                 </button>
                                             </>
                                         ) : (
-                                            <div className={`px-4 py-2 rounded-xl font-bold text-center ${
-                                                req.status === 'Diterima' ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'
-                                            }`}>
+                                            <div className={`px-4 py-2 rounded-xl font-bold text-center ${req.status === 'Diterima' ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'
+                                                }`}>
                                                 {req.status}
                                             </div>
                                         )}
@@ -348,10 +346,9 @@ export default function DashboardPage() {
                                         <p className="text-sm text-teal-700/70 dark:text-teal-400">Oleh: {req.uploader_name}</p>
                                     </div>
                                 </div>
-                                <div className={`px-4 py-2 rounded-full font-bold text-sm ${
-                                    req.status === 'Diterima' ? 'bg-emerald-100 text-emerald-600' : 
-                                    req.status === 'Menunggu' ? 'bg-orange-100 text-orange-600' : 'bg-red-100 text-red-600'
-                                }`}>
+                                <div className={`px-4 py-2 rounded-full font-bold text-sm ${req.status === 'Diterima' ? 'bg-emerald-100 text-emerald-600' :
+                                        req.status === 'Menunggu' ? 'bg-orange-100 text-orange-600' : 'bg-red-100 text-red-600'
+                                    }`}>
                                     {req.status}
                                 </div>
                             </div>
@@ -377,11 +374,10 @@ export default function DashboardPage() {
                                     )}
                                 </div>
                                 <div className="shrink-0">
-                                    <div className={`inline-block px-4 py-1.5 text-sm font-bold rounded-full ${
-                                        donation.payment_status === 'Success'
+                                    <div className={`inline-block px-4 py-1.5 text-sm font-bold rounded-full ${donation.payment_status === 'Success'
                                             ? 'bg-emerald-50 text-emerald-600 border border-emerald-100'
                                             : 'bg-yellow-50 text-yellow-600 border border-yellow-100'
-                                    }`}>
+                                        }`}>
                                         {donation.payment_status === 'Success' ? 'Berhasil' : donation.payment_status || 'Pending'}
                                     </div>
                                 </div>
@@ -401,15 +397,15 @@ export default function DashboardPage() {
                                     </div>
                                     <div className="flex-1">
                                         <h3 className="text-xl font-bold text-teal-950 dark:text-white mb-3">{campaign.title}</h3>
-                                        
+
                                         <div className="space-y-2">
                                             <div className="flex justify-between text-sm">
                                                 <span className="font-bold text-teal-900">Rp {(Number(campaign.collected_amount) || 0).toLocaleString('id-ID')} terkumpul</span>
                                                 <span className="text-teal-600">dari Rp {(Number(campaign.target_amount) || 0).toLocaleString('id-ID')}</span>
                                             </div>
                                             <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
-                                                <div 
-                                                    className="bg-orange-500 h-2.5 rounded-full transition-all duration-1000" 
+                                                <div
+                                                    className="bg-orange-500 h-2.5 rounded-full transition-all duration-1000"
                                                     style={{ width: `${progress}%` }}
                                                 ></div>
                                             </div>
