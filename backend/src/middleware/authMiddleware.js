@@ -15,7 +15,7 @@ const authenticate = async (req, res, next) => {
     }
     
     const user = JSON.parse(sessionData);
-    req.user = user; // { userId, email }
+    req.user = user; // { userId, email, role }
     next();
   } catch (err) {
     next(err);

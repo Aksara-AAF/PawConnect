@@ -37,9 +37,9 @@ const login = async (email, password) => {
   // Generate session token
   const sessionToken = crypto.randomBytes(32).toString('hex');
   
-  // Store in Redis (valid for 24 hours) — include role for middleware checks
+  // Store in Redis (valid for 7 hari) — include role for middleware checks
   const sessionData = JSON.stringify({ userId: user.id, email: user.email, role: user.role });
-  await redisClient.setEx(`session:${sessionToken}`, 86400, sessionData);
+  await redisClient.setEx(`session:${sessionToken}`, 86400 * 7, sessionData);
 
   const { password_hash, ...userWithoutPassword } = user;
   

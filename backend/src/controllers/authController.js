@@ -29,13 +29,13 @@ const login = async (req, res, next) => {
 
     const { user, sessionToken } = await authService.login(email, password);
 
-    // Set cookie
+    const isProduction = process.env.NODE_ENV === 'production';
+
     res.cookie('sessionId', sessionToken, {
       httpOnly: true,
-      maxAge: 86400 * 1000,
-      // secure: true
-      secure: false,
-      sameSite: 'lax'
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 hari
+      secure: isProduction,          // true di HTTPS (Vercel)
+      sameSite: isProduction ? 'none' : 'lax', // 'none' agar bisa cross-origin
     });
 
     return success(res, user, 'Login successful', 200);
