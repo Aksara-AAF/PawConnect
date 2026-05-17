@@ -29,10 +29,13 @@ const confirmPayment = async (id) => {
 
 const selectByDonor = async (donorId) => {
   const query = `
-    SELECT id, amount, message, payment_status, created_at 
-    FROM donations 
-    WHERE donor_id = $1
-    ORDER BY created_at DESC
+    SELECT
+      d.id, d.amount, d.message, d.payment_status, d.created_at,
+      c.title AS campaign_title
+    FROM donations d
+    LEFT JOIN campaigns c ON d.campaign_id = c.id
+    WHERE d.donor_id = $1
+    ORDER BY d.created_at DESC
   `;
   const result = await pool.query(query, [donorId]);
   return result.rows;

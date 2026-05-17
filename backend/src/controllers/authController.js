@@ -52,10 +52,11 @@ const logout = async (req, res, next) => {
     const sessionToken = req.cookies.sessionId;
     await authService.logout(sessionToken);
 
+    const isProduction = process.env.NODE_ENV === 'production';
     res.clearCookie('sessionId', {
       httpOnly: true,
-      secure: false,
-      sameSite: 'lax'
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax',
     });
     return success(res, null, 'Logout successful', 200);
   } catch (err) {
